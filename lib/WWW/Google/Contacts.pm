@@ -23,7 +23,7 @@ sub new {
     $args->{xmls} ||= XML::Simple->new();
     $args->{debug} ||= 0;
     $args->{'GData-Version'} = 3.0;
-    
+
     bless $args, $class;
 }
 
@@ -41,7 +41,7 @@ sub login {
     unless ( $resp and $resp->is_success ) {
         return 0;
     }
-    
+
     $self->{email} = $email;
     $self->{pass}  = $pass;
     $self->{_is_authed} = $email;
@@ -51,9 +51,9 @@ sub login {
 sub create_contact {
     my $self = shift;
     my $contact = scalar @_ % 2 ? shift : { @_ };
-    
+
     $self->login() or croak 'Authentication failed';
-    
+
     my $data = {
         'atom:entry' => {
             'xmlns:atom' => 'http://www.w3.org/2005/Atom',
@@ -89,7 +89,7 @@ sub create_contact {
     }
     my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
     print STDERR $xml . "\n" if $self->{debug};
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
     $headers{'GData-Version'} = $self->{'GData-Version'};
@@ -104,7 +104,7 @@ sub get_contacts {
     my $args = scalar @_ % 2 ? shift : { @_ };
 
     $self->login() or croak 'Authentication failed';
-    
+
     $args->{'alt'} = 'atom'; # must be atom
     $args->{'max-results'} ||= 9999;
     my $group = delete $args->{group} || 'full';
@@ -116,7 +116,7 @@ sub get_contacts {
     my $content = $resp->content;
     print STDERR $content . "\n" if $self->{debug};
     my $data = $self->{xmls}->XMLin($content, ForceArray => ['entry', 'gd:email', 'gContact:groupMembershipInfo'], SuppressEmpty => undef);
-    
+
     my @contacts;
     foreach my $id (keys %{ $data->{entry} } ) {
         my $d = $data->{entry}->{$id};
@@ -126,15 +126,15 @@ sub get_contacts {
         $d->{groupMembershipInfo} = $d->{'gContact:groupMembershipInfo'};
         push @contacts, $d;
     }
-    
+
     return @contacts;
 }
 
 sub get_contact {
     my ($self, $id) = @_;
-    
+
     $self->login() or croak 'Authentication failed';
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'GData-Version'} = $self->{'GData-Version'};
     my $resp =$self->{ua}->get( $id, %headers );
@@ -145,7 +145,7 @@ sub get_contact {
 
 sub update_contact {
     my ($self, $id, $contact) = @_;
-    
+
     $self->login() or croak 'Authentication failed';
 
     my $data = {
@@ -202,7 +202,7 @@ sub update_contact {
     }
     my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
     print $xml . "\n" if $self->{debug};
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
     $headers{'GData-Version'} = $self->{'GData-Version'};
@@ -215,7 +215,7 @@ sub update_contact {
 
 sub delete_contact {
     my ($self, $id) = @_;
-    
+
     $self->_delete($id);
 }
 
@@ -224,7 +224,7 @@ sub get_groups {
     my $args = scalar @_ % 2 ? shift : { @_ };
 
     $self->login() or croak 'Authentication failed';
-    
+
     $args->{'alt'} = 'atom'; # must be atom
     $args->{'max-results'} ||= 9999;
     my $url  = 'http://www.google.com/m8/feeds/groups/default/full?v=3.0';
@@ -235,7 +235,7 @@ sub get_groups {
     my $content = $resp->content;
     print $content . "\n" if $self->{debug};
     my $data = $self->{xmls}->XMLin($content, SuppressEmpty => undef);
-    
+
     my @groups;
     foreach my $id (keys %{ $data->{entry} } ) {
         my $d = $data->{entry}->{$id};
@@ -246,15 +246,15 @@ sub get_groups {
             exists $d->{'gContact:systemGroup'} ? ('gContact:systemGroup' => $d->{'gContact:systemGroup'}->{'id'}) : (),
         };
     }
-    
+
     return @groups;
 }
 
 sub get_group {
     my ($self, $id) = @_;
-    
+
     $self->login() or croak 'Authentication failed';
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'GData-Version'} = $self->{'GData-Version'};
     my $resp =$self->{ua}->get( $id, %headers );
@@ -266,7 +266,7 @@ sub get_group {
 sub create_group {
     my $self = shift;
     my $contact = scalar @_ % 2 ? shift : { @_ };
-    
+
     $self->login() or croak 'Authentication failed';
 
     my $data = {
@@ -285,7 +285,7 @@ sub create_group {
     };
     my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
     print $xml . "\n" if $self->{debug};
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
     $headers{'GData-Version'} = $self->{'GData-Version'};
@@ -297,7 +297,7 @@ sub create_group {
 
 sub update_group {
     my ($self, $id, $args) = @_;
-    
+
     $self->login() or croak 'Authentication failed';
 
     my $data = {
@@ -329,7 +329,7 @@ sub update_group {
     };
     my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
     print $xml . "\n" if $self->{debug};
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
     $headers{'GData-Version'} = $self->{'GData-Version'};
@@ -342,15 +342,15 @@ sub update_group {
 
 sub delete_group {
     my ($self, $id) = @_;
-    
+
     $self->_delete($id);
 }
 
 sub _delete {
     my ($self, $id) = @_;
-    
+
     $self->login() or croak 'Authentication failed';
-    
+
     my %headers = $self->{authsub}->auth_params;
     $headers{'If-Match'} = '*';
     $headers{'X-HTTP-Method-Override'} = 'DELETE';
@@ -368,7 +368,7 @@ __END__
 
     my $gcontacts = WWW::Google::Contacts->new();
     $gcontacts->login('fayland@gmail.com', 'pass') or die 'login failed';
-    
+
     # create contact
     my $status = $gcontacts->create_contact( {
         givenName => 'FayTestG',
@@ -380,7 +380,7 @@ __END__
         secondaryMail => 'secndary@test.com', # optional
     } );
     print "Create OK" if $status;
-    
+
     my @contacts = $gcontacts->get_contacts;
     foreach my $contact (@contacts) {
         my @emails = map { $_->{address} } @{ $contact->{email} };
@@ -498,3 +498,16 @@ Update a group
 =head2 ACKNOWLEDGE
 
 John Clyde - who share me with his code about Contacts API
+
+=head1 AUTHOR
+
+  Fayland Lam <fayland@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Fayland Lam.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as perl itself.
+
+=cut
