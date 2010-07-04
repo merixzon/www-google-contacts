@@ -2,8 +2,8 @@ package WWW::Google::Contacts;
 
 # ABSTRACT: Google Contacts Data API
 
-use warnings;
-use strict;
+use Moose;
+
 use Carp qw/croak/;
 use URI::Escape;
 use LWP::UserAgent;
@@ -14,40 +14,67 @@ use HTTP::Request;
 our $VERSION = '0.05';
 $VERSION = eval $VERSION;
 
-sub new {
-    my $class = shift;
-    my $args = scalar @_ % 2 ? shift : { @_ };
+has ua => (
+    is        => 'ro',
+    default   => sub { LWP::UserAgent->new },
+);
 
-    unless ( $args->{ua} ) {
-        my $ua_args = delete $args->{ua_args} || {};
-        $args->{ua} = LWP::UserAgent->new(%$ua_args);
-    }
-    $args->{authsub} ||= Net::Google::AuthSub->new(service => 'cp');
-    $args->{xmls} ||= XML::Simple->new();
-    $args->{debug} ||= 0;
-    $args->{'GData-Version'} = 3.0;
+has authsub => (
+    is        => 'ro',
+    default   => sub { Net::Google::AuthSub->new(service => 'cp') },
+);
 
-    bless $args, $class;
-}
+has xmls => (
+    is        => 'ro',
+    default   => sub { XML::Simple->new },
+);
+
+has debug => (
+    isa       => 'Bool',
+    is        => 'ro',
+    default   => 0,
+);
+
+has email => (
+    isa       => 'Str',
+    is        => 'rw',
+);
+
+has pass => (
+    isa       => 'Str',
+    is        => 'rw',
+);
+
+has is_authed => (
+    isa       => 'Bool',
+    is        => 'rw',
+    default   => 0,
+);
+
+has gdata_version => (
+    isa       => 'Str',
+    is        => 'ro',
+    default   => '3.0',
+);
 
 sub login {
     my ($self, $email, $pass) = @_;
 
-    $email ||= $self->{email};
-    $pass  ||= $self->{pass};
+    $email ||= $self->email;
+    $pass  ||= $self->pass;
     $email or croak 'login(email, pass)';
     $pass  or croak 'login(email, pass)';
 
-    return 1 if $self->{_is_authed} and $self->{_is_authed} eq $email;
+    return 1 if $self->is_authed;
 
-    my $resp = $self->{authsub}->login($email, $pass);
+    my $resp = $self->authsub->login($email, $pass);
     unless ( $resp and $resp->is_success ) {
         return 0;
     }
 
-    $self->{email} = $email;
-    $self->{pass}  = $pass;
-    $self->{_is_authed} = $email;
+    $self->email( $email );
+    $self->pass( $pass );
+    $self->is_authed( 1 );
     return 1;
 }
 
@@ -90,15 +117,15 @@ sub create_contact {
             address => $contact->{secondaryMail},
         }
     }
-    my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
-    print STDERR $xml . "\n" if $self->{debug};
+    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
+    print STDERR $xml . "\n" if $self->debug;
 
-    my %headers = $self->{authsub}->auth_params;
+    my %headers = $self->authsub->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->{'GData-Version'};
+    $headers{'GData-Version'} = $self->gdata_version;
     my $url = 'http://www.google.com/m8/feeds/contacts/default/full';
-    my $resp =$self->{ua}->post( $url, %headers, Content => $xml );
-    print STDERR $resp->content . "\n" if $self->{debug};
+    my $resp =$self->ua->post( $url, %headers, Content => $xml );
+    print STDERR $resp->content . "\n" if $self->debug;
     return ($resp->code == 201) ? 1 : 0;
 }
 
@@ -115,10 +142,10 @@ sub get_contacts {
     foreach my $key (keys %$args) {
         $url .= '&' . uri_escape($key) . '=' . uri_escape($args->{$key});
     }
-    my $resp =$self->{ua}->get( $url, $self->{authsub}->auth_params );
+    my $resp =$self->ua->get( $url, $self->authsub->auth_params );
     my $content = $resp->content;
-    print STDERR $content . "\n" if $self->{debug};
-    my $data = $self->{xmls}->XMLin($content, ForceArray => ['entry', 'gd:email', 'gContact:groupMembershipInfo'], SuppressEmpty => undef);
+    print STDERR $content . "\n" if $self->debug;
+    my $data = $self->xmls->XMLin($content, ForceArray => ['entry', 'gd:email', 'gContact:groupMembershipInfo'], SuppressEmpty => undef);
 
     my @contacts;
     foreach my $id (keys %{ $data->{entry} } ) {
@@ -138,11 +165,11 @@ sub get_contact {
 
     $self->login() or croak 'Authentication failed';
 
-    my %headers = $self->{authsub}->auth_params;
-    $headers{'GData-Version'} = $self->{'GData-Version'};
-    my $resp =$self->{ua}->get( $id, %headers );
-    print $resp->content . "\n" if $self->{debug};
-    my $data = $self->{xmls}->XMLin($resp->content, SuppressEmpty => undef);
+    my %headers = $self->authsub->auth_params;
+    $headers{'GData-Version'} = $self->gdata_version;
+    my $resp =$self->ua->get( $id, %headers );
+    print $resp->content . "\n" if $self->debug;
+    my $data = $self->xmls->XMLin($resp->content, SuppressEmpty => undef);
     return $data;
 }
 
@@ -203,16 +230,16 @@ sub update_contact {
             href => $contact->{groupMembershipInfo}
         };
     }
-    my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
-    print $xml . "\n" if $self->{debug};
+    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
+    print $xml . "\n" if $self->debug;
 
-    my %headers = $self->{authsub}->auth_params;
+    my %headers = $self->authsub->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->{'GData-Version'};
+    $headers{'GData-Version'} = $self->gdata_version;
     $headers{'If-Match'} = '*';
     $headers{'X-HTTP-Method-Override'} = 'PUT';
-    my $resp =$self->{ua}->post( $id, %headers, Content => $xml );
-    print $resp->content . "\n" if $self->{debug};
+    my $resp =$self->ua->post( $id, %headers, Content => $xml );
+    print $resp->content . "\n" if $self->debug;
     return ($resp->code == 200) ? 1 : 0;
 }
 
@@ -234,10 +261,10 @@ sub get_groups {
     foreach my $key (keys %$args) {
         $url .= '&' . uri_escape($key) . '=' . uri_escape($args->{$key});
     }
-    my $resp =$self->{ua}->get( $url, $self->{authsub}->auth_params );
+    my $resp =$self->ua->get( $url, $self->authsub->auth_params );
     my $content = $resp->content;
-    print $content . "\n" if $self->{debug};
-    my $data = $self->{xmls}->XMLin($content, SuppressEmpty => undef);
+    print $content . "\n" if $self->debug;
+    my $data = $self->xmls->XMLin($content, SuppressEmpty => undef);
 
     my @groups;
     foreach my $id (keys %{ $data->{entry} } ) {
@@ -258,11 +285,11 @@ sub get_group {
 
     $self->login() or croak 'Authentication failed';
 
-    my %headers = $self->{authsub}->auth_params;
-    $headers{'GData-Version'} = $self->{'GData-Version'};
-    my $resp =$self->{ua}->get( $id, %headers );
-    print $resp->content . "\n" if $self->{debug};
-    my $data = $self->{xmls}->XMLin($resp->content, SuppressEmpty => undef);
+    my %headers = $self->authsub->auth_params;
+    $headers{'GData-Version'} = $self->gdata_version;
+    my $resp =$self->ua->get( $id, %headers );
+    print $resp->content . "\n" if $self->debug;
+    my $data = $self->xmls->XMLin($resp->content, SuppressEmpty => undef);
     return $data;
 }
 
@@ -286,15 +313,15 @@ sub create_group {
             }
         },
     };
-    my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
-    print $xml . "\n" if $self->{debug};
+    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
+    print $xml . "\n" if $self->debug;
 
-    my %headers = $self->{authsub}->auth_params;
+    my %headers = $self->authsub->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->{'GData-Version'};
+    $headers{'GData-Version'} = $self->gdata_version;
     my $url = 'http://www.google.com/m8/feeds/groups/default/full';
-    my $resp =$self->{ua}->post( $url, %headers, Content => $xml );
-    print $resp->content . "\n" if $self->{debug};
+    my $resp =$self->ua->post( $url, %headers, Content => $xml );
+    print $resp->content . "\n" if $self->debug;
     return ($resp->code == 201) ? 1 : 0;
 }
 
@@ -330,16 +357,16 @@ sub update_group {
             ],
         },
     };
-    my $xml = $self->{xmls}->XMLout($data, KeepRoot => 1);
-    print $xml . "\n" if $self->{debug};
+    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
+    print $xml . "\n" if $self->debug;
 
-    my %headers = $self->{authsub}->auth_params;
+    my %headers = $self->authsub->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->{'GData-Version'};
+    $headers{'GData-Version'} = $self->gdata_version;
     $headers{'If-Match'} = '*';
     $headers{'X-HTTP-Method-Override'} = 'PUT';
-    my $resp =$self->{ua}->post( $id, %headers, Content => $xml );
-    print $resp->content . "\n" if $self->{debug};
+    my $resp =$self->ua->post( $id, %headers, Content => $xml );
+    print $resp->content . "\n" if $self->debug;
     return ($resp->code == 200) ? 1 : 0;
 }
 
@@ -354,14 +381,16 @@ sub _delete {
 
     $self->login() or croak 'Authentication failed';
 
-    my %headers = $self->{authsub}->auth_params;
+    my %headers = $self->authsub->auth_params;
     $headers{'If-Match'} = '*';
     $headers{'X-HTTP-Method-Override'} = 'DELETE';
-    $headers{'GData-Version'} = $self->{'GData-Version'};
-    my $resp =$self->{ua}->post($id, %headers);
+    $headers{'GData-Version'} = $self->gdata_version;
+    my $resp =$self->ua->post($id, %headers);
     return $resp->code == 200 ? 1 : 0;
 }
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
 __END__
 
