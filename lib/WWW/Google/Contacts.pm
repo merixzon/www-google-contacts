@@ -11,6 +11,9 @@ use Net::Google::AuthSub;
 use XML::Simple ();
 use HTTP::Request;
 
+our $VERSION = '0.05';
+$VERSION = eval $VERSION;
+
 sub new {
     my $class = shift;
     my $args = scalar @_ % 2 ? shift : { @_ };
