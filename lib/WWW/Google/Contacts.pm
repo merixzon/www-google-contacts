@@ -11,6 +11,9 @@ use Net::Google::AuthSub;
 use XML::Simple ();
 use HTTP::Request;
 
+use WWW::Google::Contacts::Server;
+use WWW::Google::Contacts::Contact;
+
 our $VERSION = '0.05';
 $VERSION = eval $VERSION;
 
@@ -38,11 +41,13 @@ has debug => (
 has email => (
     isa       => 'Str',
     is        => 'rw',
+    required  => 1,
 );
 
 has pass => (
     isa       => 'Str',
     is        => 'rw',
+    required  => 1,
 );
 
 has is_authed => (
@@ -56,6 +61,22 @@ has gdata_version => (
     is        => 'ro',
     default   => '3.0',
 );
+
+
+sub BUILD {
+    my $self = shift;
+    WWW::Google::Contacts::Server->initialize(
+        username => $self->email,
+        password => $self->pass,
+    );
+}
+
+sub new_contact {
+    my $self = shift;
+    return WWW::Google::Contacts::Contact->new();
+}
+
+# TODO - update all subs below to use new code
 
 sub login {
     my ($self, $email, $pass) = @_;

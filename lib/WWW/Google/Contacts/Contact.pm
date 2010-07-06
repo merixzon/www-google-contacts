@@ -175,6 +175,8 @@ sub create {
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
     $self->_set_id( $data->{ id } );
+#    use Data::Dumper;
+#    print Dumper { res => $res };
 }
 
 sub retrieve {
