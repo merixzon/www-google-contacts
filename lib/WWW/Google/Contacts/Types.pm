@@ -16,6 +16,8 @@ use MooseX::Types -declare =>
             ArrayRefOfOrganization
             ArrayRefOfPostalAddress
 
+            Birthday
+
             XmlBool
             Rel
     ) ];
@@ -223,4 +225,14 @@ coerce XmlBool,
     via {
         return 1 if ( $_ =~ m{^true$}i );
         return 0;
+    };
+
+class_type Birthday,
+    { class => 'WWW::Google::Contacts::Type::Birthday' };
+
+coerce Birthday,
+    from Str,
+    via {
+        require WWW::Google::Contacts::Type::Birthday;
+        WWW::Google::Contacts::Type::Birthday->new( when => $_ );
     };

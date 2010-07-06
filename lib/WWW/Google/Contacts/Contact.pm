@@ -10,6 +10,8 @@ use WWW::Google::Contacts::Types qw(
                                        ArrayRefOfEmail Email
                                        ArrayRefOfOrganization Organization
                                        ArrayRefOfPostalAddress PostalAddress
+
+                                       Birthday
                                );
 use WWW::Google::Contacts::Meta::Attribute::Trait;
 use WWW::Google::Contacts::Server;
@@ -108,6 +110,25 @@ has postal_address => (
     coerce    => 1,
 );
 
+has billing_information => (
+    isa       => Str,
+    is        => 'rw',
+    predicate => 'has_billing_information',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'gContact:billingInformation',
+    is_element => 1,
+);
+
+has birthday => (
+    isa       => Birthday,
+    is        => 'rw',
+    predicate => 'has_birthday',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'gContact:birthday',
+    is_element => 1,
+    coerce     => 1,
+);
+
 has server => (
     is        => 'ro',
     default   => sub { WWW::Google::Contacts::Server->instance },
@@ -131,6 +152,7 @@ sub as_xml {
         entry => {
             'xmlns' => 'http://www.w3.org/2005/Atom',
             'xmlns:gd' => 'http://schemas.google.com/g/2005',
+            'xmlns:gContact' => 'http://schemas.google.com/contact/2008',
             %{ $self->to_xml_hashref },
         },
     };
@@ -165,6 +187,8 @@ sub update {
 
     my $xml = $self->as_xml;
     my $res = $self->server->put( $self->id, $xml );
+    #use Data::Dumper;
+    #print Dumper { res => $res };
 }
 
 sub delete {
