@@ -2,7 +2,7 @@ package WWW::Google::Contacts::Type::Category;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
-use WWW::Google::Contacts::Types qw( Rel );
+use WWW::Google::Contacts::InternalTypes qw( Rel );
 use WWW::Google::Contacts::Meta::Attribute::Trait;
 
 extends 'WWW::Google::Contacts::Type::Base';

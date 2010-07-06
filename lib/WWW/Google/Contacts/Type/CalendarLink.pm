@@ -2,7 +2,7 @@ package WWW::Google::Contacts::Type::CalendarLink;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
-use WWW::Google::Contacts::Types qw( Rel XmlBool );
+use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool );
 use WWW::Google::Contacts::Meta::Attribute::Trait;
 
 extends 'WWW::Google::Contacts::Type::Base';
