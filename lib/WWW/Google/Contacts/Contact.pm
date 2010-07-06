@@ -12,6 +12,7 @@ use WWW::Google::Contacts::Types qw(
                                        ArrayRefOfPostalAddress PostalAddress
 
                                        Birthday
+                                       ArrayRefOfCalendarLink
                                );
 use WWW::Google::Contacts::Meta::Attribute::Trait;
 use WWW::Google::Contacts::Server;
@@ -35,7 +36,6 @@ has category => (
     traits    => [ 'XmlField' ],
     xml_key   => 'category',
     default   => sub { undef },
-    is        => 'rw',
     coerce    => 1,
 );
 
@@ -66,7 +66,6 @@ has phone_number => (
     predicate => 'has_phone_number',
     traits    => [ 'XmlField' ],
     xml_key   => 'gd:phoneNumber',
-    is        => 'rw',
     coerce    => 1,
 );
 
@@ -76,7 +75,6 @@ has email => (
     predicate => 'has_email',
     traits    => [ 'XmlField' ],
     xml_key   => 'gd:email',
-    is        => 'rw',
     coerce    => 1,
 );
 
@@ -86,7 +84,6 @@ has im => (
     predicate => 'has_im',
     traits    => [ 'XmlField' ],
     xml_key   => 'gd:im',
-    is        => 'rw',
     coerce    => 1,
 );
 
@@ -96,7 +93,6 @@ has organization => (
     predicate => 'has_organization',
     traits    => [ 'XmlField' ],
     xml_key   => 'gd:organization',
-    is        => 'rw',
     coerce    => 1,
 );
 
@@ -106,7 +102,6 @@ has postal_address => (
     predicate => 'has_postal_address',
     traits    => [ 'XmlField' ],
     xml_key   => 'gd:structuredPostalAddress',
-    is        => 'rw',
     coerce    => 1,
 );
 
@@ -128,6 +123,17 @@ has birthday => (
     is_element => 1,
     coerce     => 1,
 );
+
+has calendar_link => (
+    isa       => ArrayRefOfCalendarLink,
+    is        => 'rw',
+    predicate => 'has_calendar_link',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'gContact:calendarLink',
+    coerce    => 1,
+);
+
+#####
 
 has server => (
     is        => 'ro',

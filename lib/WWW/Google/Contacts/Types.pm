@@ -9,6 +9,7 @@ use MooseX::Types -declare =>
             IM
             Organization
             PostalAddress
+            CalendarLink ArrayRefOfCalendarLink
 
             ArrayRefOfPhoneNumber
             ArrayRefOfEmail
@@ -235,4 +236,39 @@ coerce Birthday,
     via {
         require WWW::Google::Contacts::Type::Birthday;
         WWW::Google::Contacts::Type::Birthday->new( when => $_ );
+    },
+    from HashRef,
+    via {
+        require WWW::Google::Contacts::Type::Birthday;
+        WWW::Google::Contacts::Type::Birthday->new( $_ );
+    };
+
+class_type CalendarLink,
+    { class => 'WWW::Google::Contacts::Type::CalendarLink' };
+
+coerce CalendarLink,
+    from HashRef,
+    via {
+        require WWW::Google::Contacts::Type::CalendarLink;
+        WWW::Google::Contacts::Type::CalendarLink->new( $_ );
+    },
+    from Str,
+    via {
+        require WWW::Google::Contacts::Type::CalendarLink;
+        WWW::Google::Contacts::Type::CalendarLink->new( type => "home", href => $_ );
+    };
+
+subtype ArrayRefOfCalendarLink,
+    as ArrayRef[ CalendarLink ];
+
+coerce ArrayRefOfCalendarLink,
+    from ArrayRef,
+    via {
+        require WWW::Google::Contacts::Type::CalendarLink;
+        return [ map { to_CalendarLink( $_ ) } @{ $_ } ];
+    },
+    from Any,
+    via {
+        require WWW::Google::Contacts::Type::CalendarLink;
+        return [ to_CalendarLink( $_ ) ];
     };
