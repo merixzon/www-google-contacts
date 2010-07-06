@@ -126,13 +126,28 @@ sub d {
 
 
 sub create {
+    my $self = shift;
+
+    my $entry = {
+        entry => {
+            'xmlns' => 'http://www.w3.org/2005/Atom',
+            'xmlns:gd' => 'http://schemas.google.com/g/2005',
+            %{ $self->to_xml_hashref },
+        },
+    };
+    my $xmls = XML::Simple->new;
+    my $xml = $xmls->XMLout( $entry, KeepRoot => 1 );
+    my $url = 'http://www.google.com/m8/feeds/contacts/default/full';
+    my $res = $self->server->post( $url, $xml );
+    my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
+    return $self->set_from_server( $data );
 }
 
 sub retrieve {
     my $self = shift;
     croak "No id set" unless $self->id;
-    my $res = $self->server->get( $self->id );
 
+    my $res = $self->server->get( $self->id );
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
     return $self->set_from_server( $data );
@@ -144,16 +159,14 @@ sub update {
 
     my $entry = {
         entry => {
-            %{ $self->to_xml_hashref },
             'xmlns' => 'http://www.w3.org/2005/Atom',
             'xmlns:gd' => 'http://schemas.google.com/g/2005',
+            %{ $self->to_xml_hashref },
         },
     };
-
     my $xmls = XML::Simple->new;
     my $xml = $xmls->XMLout( $entry, KeepRoot => 1 );
     my $res = $self->server->put( $self->id, $xml );
-    #print $xml;
 }
 
 sub delete {

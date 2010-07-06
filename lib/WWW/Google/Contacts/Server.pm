@@ -51,6 +51,16 @@ sub get {
     return $self->ua->get( $id, %headers );
 }
 
+sub post {
+    my ($self, $id, $content) = @_;
+
+    my %headers = $self->authsub->auth_params;
+    $headers{'Content-Type'} = 'application/atom+xml';
+    $headers{'GData-Version'} = $self->gdata_version;
+    my $res = $self->ua->post( $id, %headers, Content => $content );
+    return $res;
+}
+
 sub put {
     my ($self, $id, $content) = @_;
 
