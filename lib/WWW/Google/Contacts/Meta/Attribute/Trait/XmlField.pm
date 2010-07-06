@@ -1,4 +1,4 @@
-package WWW::Google::Contacts::Meta::Attribute::Trait;
+package WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 use Moose::Role;
 
@@ -24,6 +24,6 @@ has is_element => (
 no Moose::Role;
 
 package Moose::Meta::Attribute::Custom::Trait::XmlField;
-sub register_implementation {'WWW::Google::Contacts::Meta::Attribute::Trait'}
+sub register_implementation {'WWW::Google::Contacts::Meta::Attribute::Trait::XmlField'}
 
 1;

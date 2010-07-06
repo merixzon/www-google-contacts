@@ -2,7 +2,7 @@ package WWW::Google::Contacts::Type::Birthday;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
-use WWW::Google::Contacts::Meta::Attribute::Trait;
+use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
 

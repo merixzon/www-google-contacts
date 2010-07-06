@@ -14,7 +14,7 @@ use WWW::Google::Contacts::Types qw(
                                        Birthday
                                        ArrayRefOfCalendarLink
                                );
-use WWW::Google::Contacts::Meta::Attribute::Trait;
+use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 use WWW::Google::Contacts::Server;
 use Carp qw( croak );
 use XML::Simple ();

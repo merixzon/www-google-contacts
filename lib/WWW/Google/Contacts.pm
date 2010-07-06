@@ -13,6 +13,7 @@ use HTTP::Request;
 
 use WWW::Google::Contacts::Server;
 use WWW::Google::Contacts::Contact;
+use WWW::Google::Contacts::ContactList;
 
 our $VERSION = '0.05';
 $VERSION = eval $VERSION;
@@ -74,6 +75,13 @@ sub BUILD {
 sub new_contact {
     my $self = shift;
     return WWW::Google::Contacts::Contact->new();
+}
+
+sub contacts {
+    my $self = shift;
+
+    my $list = WWW::Google::Contacts::ContactList->new();
+    return $list;
 }
 
 # TODO - update all subs below to use new code

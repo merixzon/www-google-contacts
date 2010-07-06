@@ -3,7 +3,7 @@ package WWW::Google::Contacts::Type::PostalAddress;
 use Moose;
 use MooseX::Types::Moose qw( Str );
 use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool );
-use WWW::Google::Contacts::Meta::Attribute::Trait;
+use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
 

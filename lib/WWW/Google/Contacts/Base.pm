@@ -42,18 +42,24 @@ sub set_from_server {
             $self->$name( $data->{ $attr->xml_key } );
         }
     }
+    return $self;
 }
 
 around BUILDARGS => sub {
     my $orig = shift;
     my $class = shift;
 
+    return $class->$orig() unless ( @_ );
+
+    # let's see if we need to mangle xml fields
+    my $data;
     if ( @_ > 1 ) {
-        return $class->$orig( @_ );
+        $data = {@_};
+    }
+    else {
+        $data = shift @_;
     }
 
-    # if we have a ref, let's see if we need to mangle xml fields
-    my $data = shift @_;
     foreach my $attr ( $class->_xml_attributes ) {
         if ( defined $data->{ $attr->xml_key } ) {
             $data->{ $attr->name } = delete $data->{ $attr->xml_key };
