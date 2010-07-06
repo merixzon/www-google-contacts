@@ -70,8 +70,18 @@ sub put {
     $headers{'If-Match'} = '*';
     $headers{'X-HTTP-Method-Override'} = 'PUT';
     my $res = $self->ua->post( $id, %headers, Content => $content );
-    use Data::Dumper;
-    print Dumper { content => $content, res => $res };
+    return $res;
+}
+
+sub delete {
+    my ($self, $id) = @_;
+
+    my %headers = $self->authsub->auth_params;
+    $headers{'If-Match'} = '*';
+    $headers{'X-HTTP-Method-Override'} = 'DELETE';
+    $headers{'GData-Version'} = $self->gdata_version;
+    my $res = $self->ua->post($id, %headers);
+    return $res;
 }
 
 no Moose;

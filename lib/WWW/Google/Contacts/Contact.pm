@@ -4,7 +4,6 @@ use Moose;
 use MooseX::Types::Moose qw( Str );
 use WWW::Google::Contacts::Types qw(
                                        Category
-                                       Content
                                        Name
                                        ArrayRefOfPhoneNumber PhoneNumber
                                        ArrayRefOfIM
@@ -16,6 +15,8 @@ use WWW::Google::Contacts::Meta::Attribute::Trait;
 use WWW::Google::Contacts::Server;
 use Carp qw( croak );
 use XML::Simple ();
+
+use constant CREATE_URL => 'http://www.google.com/m8/feeds/contacts/default/full';
 
 extends 'WWW::Google::Contacts::Base';
 
@@ -37,12 +38,12 @@ has category => (
 );
 
 has content => (
-    isa       => Content,
+    isa       => Str,
     is        => 'rw',
     predicate => 'has_content',
     traits    => [ 'XmlField' ],
     xml_key   => 'content',
-    coerce    => 1,
+    is_element => 1,
 );
 
 has name => (
@@ -124,10 +125,8 @@ sub d {
     print Dumper { d => $self->to_xml_hashref };
 }
 
-
-sub create {
+sub as_xml {
     my $self = shift;
-
     my $entry = {
         entry => {
             'xmlns' => 'http://www.w3.org/2005/Atom',
@@ -137,10 +136,17 @@ sub create {
     };
     my $xmls = XML::Simple->new;
     my $xml = $xmls->XMLout( $entry, KeepRoot => 1 );
-    my $url = 'http://www.google.com/m8/feeds/contacts/default/full';
-    my $res = $self->server->post( $url, $xml );
+    return $xml;
+}
+
+sub create {
+    my $self = shift;
+
+    my $xml = $self->as_xml;
+    my $res = $self->server->post( CREATE_URL, $xml );
+    my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
-    return $self->set_from_server( $data );
+    $self->_set_id( $data->{ id } );
 }
 
 sub retrieve {
@@ -157,19 +163,17 @@ sub update {
     my $self = shift;
     croak "No id set" unless $self->id;
 
-    my $entry = {
-        entry => {
-            'xmlns' => 'http://www.w3.org/2005/Atom',
-            'xmlns:gd' => 'http://schemas.google.com/g/2005',
-            %{ $self->to_xml_hashref },
-        },
-    };
-    my $xmls = XML::Simple->new;
-    my $xml = $xmls->XMLout( $entry, KeepRoot => 1 );
+    my $xml = $self->as_xml;
     my $res = $self->server->put( $self->id, $xml );
 }
 
 sub delete {
+    my $self = shift;
+    croak "No id set" unless $self->id;
+
+    my $res = $self->server->delete( $self->id );
+    use Data::Dumper;
+    print Dumper { res => $res };
 }
 
 no Moose;

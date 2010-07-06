@@ -3,7 +3,6 @@ package WWW::Google::Contacts::Types;
 use MooseX::Types -declare =>
     [ qw(
             Category
-            Content
             Name
             PhoneNumber
             Email
@@ -48,16 +47,6 @@ coerce Category,
             type   => 'http://schemas.google.com/g/2005#kind',
             term   => 'http://schemas.google.com/contact/2008#contact'
         );
-    };
-
-class_type Content,
-    { class => 'WWW::Google::Contacts::Type::Content' };
-
-coerce Content,
-    from Str,
-    via {
-        require WWW::Google::Contacts::Type::Content;
-        WWW::Google::Contacts::Type::Content->new( value => $_ );
     };
 
 class_type Name,
