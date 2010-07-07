@@ -14,6 +14,8 @@ use HTTP::Request;
 use WWW::Google::Contacts::Server;
 use WWW::Google::Contacts::Contact;
 use WWW::Google::Contacts::ContactList;
+use WWW::Google::Contacts::Group;
+use WWW::Google::Contacts::GroupList;
 
 our $VERSION = '0.05';
 $VERSION = eval $VERSION;
@@ -99,6 +101,23 @@ sub contacts {
     return $list;
 }
 
+sub new_group {
+    my $self = shift;
+    return WWW::Google::Contacts::Group->new( server => $self->server, @_ );
+}
+
+sub group {
+    my ($self,$id) = @_;
+    return WWW::Google::Contacts::Group->new( server => $self->server, id => $id)->retrieve;
+}
+
+sub groups {
+    my $self = shift;
+
+    my $list = WWW::Google::Contacts::GroupList->new( server => $self->server );
+    return $list;
+}
+
 # All code below is for backwards compability
 
 sub _build_username {
@@ -164,7 +183,7 @@ sub get_contacts {
 
     my $list = $self->contacts;
     my @contacts;
-    foreach my $c ( @{ $list->contacts } ) {
+    foreach my $c ( @{ $list->elements } ) {
         my $d = $c;
         $d->{name} = $d->{'gd:name'};
         $d->{email} = $d->{'gd:email'};
