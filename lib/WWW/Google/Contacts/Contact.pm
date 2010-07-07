@@ -343,12 +343,6 @@ sub add_email {
     push @{ $self->email }, to_Email( $email );
 }
 
-sub d {
-    my $self = shift;
-    use Data::Dumper;
-    print Dumper { d => $self->to_xml_hashref };
-}
-
 sub as_xml {
     my $self = shift;
     my $entry = {
