@@ -3,17 +3,37 @@ package WWW::Google::Contacts::Base;
 use Moose;
 use Scalar::Util qw( blessed );
 
-sub _xml_attributes {
+sub xml_attributes {
     my $self = shift;
     return grep { $_->does( 'XmlField' ) }
         $self->meta->get_all_attributes;
+}
+
+sub get_xml_key {
+    my ($self, $field) = @_;
+
+    foreach my $attr ( $self->xml_attributes ) {
+        my $name = $attr->name;
+        my $val = $self->$name;
+        if ( $name eq $field ) {
+            return $attr->xml_key;
+        }
+        elsif ( blessed($val) and $val->can("to_xml_hashref") ) {
+            my $recurse = $val->get_xml_key( $field );
+            if ( $recurse ) {
+                my $parent = $attr->xml_key;
+                return { $parent => $recurse };
+            }
+        }
+    }
+    return undef;
 }
 
 sub to_xml_hashref {
     my $self = shift;
 
     my $to_return = {};
-    foreach my $attr ( $self->_xml_attributes ) {
+    foreach my $attr ( $self->xml_attributes ) {
         my $predicate = $attr->predicate;
 
         next if defined $predicate
@@ -36,7 +56,7 @@ sub to_xml_hashref {
 sub set_from_server {
     my ($self, $data) = @_;
 
-    foreach my $attr ( $self->_xml_attributes ) {
+    foreach my $attr ( $self->xml_attributes ) {
         if ( defined $data->{ $attr->xml_key } ) {
             my $name = $attr->name;
             $self->$name( $data->{ $attr->xml_key } );
@@ -60,7 +80,7 @@ around BUILDARGS => sub {
         $data = shift @_;
     }
 
-    foreach my $attr ( $class->_xml_attributes ) {
+    foreach my $attr ( $class->xml_attributes ) {
         if ( defined $data->{ $attr->xml_key } ) {
             $data->{ $attr->name } = delete $data->{ $attr->xml_key };
         }
