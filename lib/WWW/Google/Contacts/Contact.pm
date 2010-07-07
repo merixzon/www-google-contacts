@@ -382,8 +382,6 @@ sub create {
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
     $self->_set_id( $data->{ id } );
-#    use Data::Dumper;
-#    print Dumper { res => $res };
     1;
 }
 
@@ -404,9 +402,7 @@ sub update {
     croak "No id set" unless $self->id;
 
     my $xml = $self->as_xml;
-    my $res = $self->server->put( $self->id, $xml );
-    use Data::Dumper;
-    print Dumper { res => $res };
+    $self->server->put( $self->id, $xml );
     $self;
 }
 
@@ -414,9 +410,7 @@ sub delete {
     my $self = shift;
     croak "No id set" unless $self->id;
 
-    my $res = $self->server->delete( $self->id );
-    #use Data::Dumper;
-    #print Dumper { res => $res };
+    $self->server->delete( $self->id );
     1;
 }
 

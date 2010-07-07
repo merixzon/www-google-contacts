@@ -53,7 +53,11 @@ sub get {
     my ($self, $id) = @_;
     my %headers = $self->authsub->auth_params;
     $headers{'GData-Version'} = $self->gdata_version;
-    return $self->ua->get( $id, %headers );
+    my $res = $self->ua->get( $id, %headers );
+    unless ( $res->is_success ) {
+        croak "GET failed: " . $res->status_line;
+    }
+    return $res;
 }
 
 sub post {
@@ -63,6 +67,9 @@ sub post {
     $headers{'Content-Type'} = 'application/atom+xml';
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->post( $id, %headers, Content => $content );
+    unless ( $res->is_success ) {
+        croak "POST failed: " . $res->status_line;
+    }
     return $res;
 }
 
@@ -75,6 +82,9 @@ sub put {
     $headers{'If-Match'} = '*';
     $headers{'X-HTTP-Method-Override'} = 'PUT';
     my $res = $self->ua->post( $id, %headers, Content => $content );
+    unless ( $res->is_success ) {
+        croak "PUT failed: " . $res->status_line;
+    }
     return $res;
 }
 
@@ -86,6 +96,9 @@ sub delete {
     $headers{'X-HTTP-Method-Override'} = 'DELETE';
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->post($id, %headers);
+    unless ( $res->is_success ) {
+        croak "DELETE failed: " . $res->status_line;
+    }
     return $res;
 }
 
