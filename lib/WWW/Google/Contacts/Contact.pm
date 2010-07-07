@@ -5,17 +5,27 @@ use MooseX::Types::Moose qw( Str );
 use WWW::Google::Contacts::Types qw(
                                        Category
                                        Name
-                                       ArrayRefOfPhoneNumber PhoneNumber
-                                       ArrayRefOfIM
-                                       ArrayRefOfEmail Email
-                                       ArrayRefOfOrganization Organization
-                                       ArrayRefOfPostalAddress PostalAddress
-
+                                       PhoneNumber     ArrayRefOfPhoneNumber
+                                       Email           ArrayRefOfEmail
+                                       IM              ArrayRefOfIM
+                                       Organization    ArrayRefOfOrganization
+                                       PostalAddress   ArrayRefOfPostalAddress
+                                       CalendarLink    ArrayRefOfCalendarLink
                                        Birthday
-                                       ArrayRefOfCalendarLink
+                                       ContactEvent    ArrayRefOfContactEvent
+                                       ExternalId      ArrayRefOfExternalId
+                                       Gender
+                                       GroupMembership ArrayRefOfGroupMembership
+                                       Hobby           ArrayRefOfHobby
+                                       Jot             ArrayRefOfJot
+                                       Language        ArrayRefOfLanguage
+                                       Priority
+                                       Sensitivity
+                                       Relation        ArrayRefOfRelation
+                                       UserDefined     ArrayRefOfUserDefined
+                                       Website         ArrayRefOfWebsite
                                );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
-use WWW::Google::Contacts::Server;
 use Carp qw( croak );
 use XML::Simple ();
 
@@ -270,7 +280,7 @@ has relation => (
 );
 
 has sensitivity => (
-    isa        => Str,
+    isa        => Sensitivity,
     is         => 'rw',
     predicate  => 'has_sensitivity',
     traits     => [ 'XmlField' ],
@@ -320,12 +330,8 @@ has raw_data_for_backwards_compability => ( is => 'rw' );
 
 has server => (
     is         => 'ro',
-    lazy_build => 1,
+    required   => 1,
 );
-
-sub _build_server {
-    return WWW::Google::Contacts::Server->instance;
-}
 
 # Stolen from Meta/Attribute/Native/MethodProvider/Array.pm, need coercion
 sub add_phone_number {
@@ -399,8 +405,8 @@ sub update {
 
     my $xml = $self->as_xml;
     my $res = $self->server->put( $self->id, $xml );
-    #use Data::Dumper;
-    #print Dumper { res => $res };
+    use Data::Dumper;
+    print Dumper { res => $res };
     $self;
 }
 

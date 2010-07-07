@@ -4,6 +4,7 @@ use MooseX::Types -declare =>
     [ qw(
             XmlBool
             Rel
+            When
     ) ];
 
 use MooseX::Types::Moose qw(Str Bool);
@@ -30,4 +31,14 @@ coerce XmlBool,
     via {
         return 1 if ( $_ =~ m{^true$}i );
         return 0;
+    };
+
+class_type When,
+    { class => 'WWW::Google::Contacts::Type::When' };
+
+coerce When,
+    from Str,
+    via {
+        require WWW::Google::Contacts::Type::When;
+        WWW::Google::Contacts::Type::When->new( start_time => $_ );
     };

@@ -3,7 +3,6 @@ package WWW::Google::Contacts::ContactList;
 use Moose;
 use MooseX::Types::Moose qw( ArrayRef );
 use WWW::Google::Contacts::Contact;
-use WWW::Google::Contacts::Server;
 use Carp qw( croak );
 use XML::Simple ();
 use URI::Escape;
@@ -19,8 +18,8 @@ has contacts => (
 #####
 
 has server => (
-    is        => 'ro',
-    default   => sub { WWW::Google::Contacts::Server->instance },
+    is         => 'ro',
+    required   => 1,
 );
 
 sub _build_contacts {
@@ -47,7 +46,7 @@ sub next {
     my $self = shift;
     return undef unless ( $self->contacts );
     my $next = shift @{ $self->contacts };
-    my $contact = WWW::Google::Contacts::Contact->new();
+    my $contact = WWW::Google::Contacts::Contact->new( server => $self->server );
     return $contact->set_from_server( $next );
 }
 

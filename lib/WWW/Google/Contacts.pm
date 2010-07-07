@@ -84,13 +84,18 @@ sub _build_server {
 
 sub new_contact {
     my $self = shift;
-    return WWW::Google::Contacts::Contact->new( @_ );
+    return WWW::Google::Contacts::Contact->new( server => $self->server, @_ );
+}
+
+sub contact {
+    my ($self,$id) = @_;
+    return WWW::Google::Contacts::Contact->new( server => $self->server, id => $id)->retrieve;
 }
 
 sub contacts {
     my $self = shift;
 
-    my $list = WWW::Google::Contacts::ContactList->new();
+    my $list = WWW::Google::Contacts::ContactList->new( server => $self->server );
     return $list;
 }
 

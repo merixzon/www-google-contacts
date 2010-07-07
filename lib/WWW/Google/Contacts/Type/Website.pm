@@ -1,4 +1,4 @@
-package WWW::Google::Contacts::Type::CalendarLink;
+package WWW::Google::Contacts::Type::Website;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
@@ -16,20 +16,21 @@ has type => (
     coerce    => 1,
 );
 
+has value => (
+    isa       => Str,
+    is        => 'rw',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'href',
+    predicate => 'has_value',
+    required  => 1,
+);
+
 has label => (
     isa       => Str,
     is        => 'rw',
     traits    => [ 'XmlField' ],
     xml_key   => 'label',
     predicate => 'has_label',
-);
-
-has href => (
-    isa       => Str,
-    is        => 'rw',
-    traits    => [ 'XmlField' ],
-    xml_key   => 'href',
-    predicate => 'has_href',
 );
 
 has primary => (

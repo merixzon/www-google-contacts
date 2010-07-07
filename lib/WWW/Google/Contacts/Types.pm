@@ -4,13 +4,25 @@ use MooseX::Types -declare =>
     [ qw(
             Category
             Name
-            PhoneNumber    ArrayRefOfPhoneNumber
-            Email          ArrayRefOfEmail
-            IM             ArrayRefOfIM
-            Organization   ArrayRefOfOrganization
-            PostalAddress  ArrayRefOfPostalAddress
-            CalendarLink   ArrayRefOfCalendarLink
+            PhoneNumber     ArrayRefOfPhoneNumber
+            Email           ArrayRefOfEmail
+            IM              ArrayRefOfIM
+            Organization    ArrayRefOfOrganization
+            PostalAddress   ArrayRefOfPostalAddress
+            CalendarLink    ArrayRefOfCalendarLink
             Birthday
+            ContactEvent    ArrayRefOfContactEvent
+            ExternalId      ArrayRefOfExternalId
+            Gender
+            GroupMembership ArrayRefOfGroupMembership
+            Hobby           ArrayRefOfHobby
+            Jot             ArrayRefOfJot
+            Language        ArrayRefOfLanguage
+            Priority
+            Sensitivity
+            Relation        ArrayRefOfRelation
+            UserDefined     ArrayRefOfUserDefined
+            Website         ArrayRefOfWebsite
     ) ];
 
 use MooseX::Types::Moose qw(Str HashRef ArrayRef Any Undef Bool);
@@ -26,6 +38,18 @@ use WWW::Google::Contacts::Type::Organization;
 use WWW::Google::Contacts::Type::PostalAddress;
 use WWW::Google::Contacts::Type::Birthday;
 use WWW::Google::Contacts::Type::CalendarLink;
+
+use WWW::Google::Contacts::Type::ContactEvent;
+use WWW::Google::Contacts::Type::ExternalId;
+use WWW::Google::Contacts::Type::Gender;
+use WWW::Google::Contacts::Type::GroupMembership;
+use WWW::Google::Contacts::Type::Hobby;
+use WWW::Google::Contacts::Type::Jot;
+use WWW::Google::Contacts::Type::Language;
+use WWW::Google::Contacts::Type::Priority;
+use WWW::Google::Contacts::Type::Relation;
+use WWW::Google::Contacts::Type::UserDefined;
+use WWW::Google::Contacts::Type::Website;
 
 class_type Category,
     { class => 'WWW::Google::Contacts::Type::Category' };
@@ -164,3 +188,172 @@ coerce ArrayRefOfCalendarLink,
     via { [ map { to_CalendarLink( $_ ) } @{ $_ } ] },
     from Any,
     via { [ to_CalendarLink( $_ ) ] };
+
+class_type ContactEvent,
+    { class => 'WWW::Google::Contacts::Type::ContactEvent' };
+
+coerce ContactEvent,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::ContactEvent->new( $_ ) };
+
+subtype ArrayRefOfContactEvent,
+    as ArrayRef[ ContactEvent ];
+
+coerce ArrayRefOfContactEvent,
+    from ArrayRef,
+    via { [ map { to_ContactEvent( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_ContactEvent( $_ ) ] };
+
+class_type ExternalId,
+    { class => 'WWW::Google::Contacts::Type::ExternalId' };
+
+coerce ExternalId,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::ExternalId->new( $_ ) };
+
+subtype ArrayRefOfExternalId,
+    as ArrayRef[ ExternalId ];
+
+coerce ArrayRefOfExternalId,
+    from ArrayRef,
+    via { [ map { to_ExternalId( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_ExternalId( $_ ) ] };
+
+class_type Gender,
+    { class => 'WWW::Google::Contacts::Type::Gender' };
+
+coerce Gender,
+    from Str,
+    via { WWW::Google::Contacts::Type::Gender->new( value => $_ ) };
+
+class_type GroupMembership,
+    { class => 'WWW::Google::Contacts::Type::GroupMembership' };
+
+coerce GroupMembership,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::GroupMembership->new( $_ ) },
+    from Str,
+    via { WWW::Google::Contacts::Type::GroupMembership->new( href => $_ ) };
+
+subtype ArrayRefOfGroupMembership,
+    as ArrayRef[ GroupMembership ];
+
+coerce ArrayRefOfGroupMembership,
+    from ArrayRef,
+    via { [ map { to_GroupMembership( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_GroupMembership( $_ ) ] };
+
+class_type Hobby,
+    { class => 'WWW::Google::Contacts::Type::Hobby' };
+
+coerce Hobby,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Hobby->new( $_ ) },
+    from Str,
+    via { WWW::Google::Contacts::Type::Hobby->new( value => $_ ) };
+
+subtype ArrayRefOfHobby,
+    as ArrayRef[ Hobby ];
+
+coerce ArrayRefOfHobby,
+    from ArrayRef,
+    via { [ map { to_Hobby( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_Hobby( $_ ) ] };
+
+class_type Jot,
+    { class => 'WWW::Google::Contacts::Type::Jot' };
+
+coerce Jot,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Jot->new( $_ ) },
+    from Str,
+    via { WWW::Google::Contacts::Type::Jot->new( type => "home", value => $_ ) };
+
+subtype ArrayRefOfJot,
+    as ArrayRef[ Jot ];
+
+coerce ArrayRefOfJot,
+    from ArrayRef,
+    via { [ map { to_Jot( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_Jot( $_ ) ] };
+
+class_type Language,
+    { class => 'WWW::Google::Contacts::Type::Language' };
+
+coerce Language,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Language->new( $_ ) },
+    from Str,
+    via { WWW::Google::Contacts::Type::Language->new( value => $_ ) };
+
+subtype ArrayRefOfLanguage,
+    as ArrayRef[ Language ];
+
+coerce ArrayRefOfLanguage,
+    from ArrayRef,
+    via { [ map { to_Language( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_Language( $_ ) ] };
+
+class_type Priority,
+    { class => 'WWW::Google::Contacts::Type::Priority' };
+
+coerce Priority,
+    from Str,
+    via { WWW::Google::Contacts::Type::Priority->new( type => $_ ) };
+
+class_type Relation,
+    { class => 'WWW::Google::Contacts::Type::Relation' };
+
+coerce Relation,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Relation->new( $_ ) };
+
+subtype ArrayRefOfRelation,
+    as ArrayRef[ Relation ];
+
+coerce ArrayRefOfRelation,
+    from ArrayRef,
+    via { [ map { to_Relation( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_Relation( $_ ) ] };
+
+class_type UserDefined,
+    { class => 'WWW::Google::Contacts::Type::UserDefined' };
+
+coerce UserDefined,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::UserDefined->new( $_ ) };
+
+subtype ArrayRefOfUserDefined,
+    as ArrayRef[ UserDefined ];
+
+coerce ArrayRefOfUserDefined,
+    from ArrayRef,
+    via { [ map { to_UserDefined( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_UserDefined( $_ ) ] };
+
+class_type Website,
+    { class => 'WWW::Google::Contacts::Type::Website' };
+
+coerce Website,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Website->new( $_ ) },
+    from Str,
+    via { WWW::Google::Contacts::Type::Website->new( type => "home", value => $_ ) };
+
+subtype ArrayRefOfWebsite,
+    as ArrayRef[ Website ];
+
+coerce ArrayRefOfWebsite,
+    from ArrayRef,
+    via { [ map { to_Website( $_ ) } @{ $_ } ] },
+    from Any,
+    via { [ to_Website( $_ ) ] };
+
