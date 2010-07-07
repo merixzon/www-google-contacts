@@ -25,6 +25,22 @@ has value => (
     required  => 1,
 );
 
+has display_name => (
+    isa       => Str,
+    is        => 'rw',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'displayName',
+    predicate => 'has_display_name',
+);
+
+has label => (
+    isa       => Str,
+    is        => 'rw',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'label',
+    predicate => 'has_label',
+);
+
 has primary => (
     isa       => XmlBool,
     is        => 'rw',

@@ -44,6 +44,11 @@ sub _build_authsub {
     return $auth;
 }
 
+sub authenticate {
+    my $self = shift;
+    return 1 if ( $self->authsub );
+}
+
 sub get {
     my ($self, $id) = @_;
     my %headers = $self->authsub->auth_params;

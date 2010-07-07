@@ -27,6 +27,7 @@ has id => (
     isa       => Str,
     is        => 'ro',
     writer    => '_set_id',
+    predicate => 'has_id',
 );
 
 has category => (
@@ -39,10 +40,10 @@ has category => (
     coerce    => 1,
 );
 
-has content => (
+has notes => (
     isa       => Str,
     is        => 'rw',
-    predicate => 'has_content',
+    predicate => 'has_notes',
     traits    => [ 'XmlField' ],
     xml_key   => 'content',
     is_element => 1,
@@ -135,15 +136,25 @@ has calendar_link => (
 
 #####
 
+has raw_data_for_backwards_compability => ( is => 'rw' );
+
 has server => (
-    is        => 'ro',
-    default   => sub { WWW::Google::Contacts::Server->instance },
+    is         => 'ro',
+    lazy_build => 1,
 );
+
+sub _build_server {
+    return WWW::Google::Contacts::Server->instance;
+}
 
 # Stolen from Meta/Attribute/Native/MethodProvider/Array.pm, need coercion
 sub add_phone_number {
     my ($self,$phone) = @_;
     push @{ $self->phone_number }, to_PhoneNumber( $phone );
+}
+sub add_email {
+    my ($self,$email) = @_;
+    push @{ $self->email }, to_Email( $email );
 }
 
 sub d {
@@ -167,6 +178,16 @@ sub as_xml {
     return $xml;
 }
 
+sub create_or_update {
+    my $self = shift;
+    if ( $self->has_id ) {
+        return $self->update;
+    }
+    else {
+        return $self->create;
+    }
+}
+
 sub create {
     my $self = shift;
 
@@ -177,6 +198,7 @@ sub create {
     $self->_set_id( $data->{ id } );
 #    use Data::Dumper;
 #    print Dumper { res => $res };
+    1;
 }
 
 sub retrieve {
@@ -186,7 +208,9 @@ sub retrieve {
     my $res = $self->server->get( $self->id );
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
-    return $self->set_from_server( $data );
+    $self->raw_data_for_backwards_compability( $data );
+    $self->set_from_server( $data );
+    $self;
 }
 
 sub update {
@@ -197,6 +221,7 @@ sub update {
     my $res = $self->server->put( $self->id, $xml );
     #use Data::Dumper;
     #print Dumper { res => $res };
+    $self;
 }
 
 sub delete {
@@ -204,8 +229,9 @@ sub delete {
     croak "No id set" unless $self->id;
 
     my $res = $self->server->delete( $self->id );
-    use Data::Dumper;
-    print Dumper { res => $res };
+    #use Data::Dumper;
+    #print Dumper { res => $res };
+    1;
 }
 
 no Moose;

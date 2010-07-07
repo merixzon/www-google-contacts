@@ -39,17 +39,23 @@ has debug => (
     default   => 0,
 );
 
-has email => (
-    isa       => 'Str',
-    is        => 'rw',
-    required  => 1,
+has username => (
+    isa        => 'Str',
+    is         => 'ro',
+    lazy_build => 1,
+    required   => 1,
 );
 
-has pass => (
-    isa       => 'Str',
-    is        => 'rw',
-    required  => 1,
+has password => (
+    isa        => 'Str',
+    is         => 'ro',
+    lazy_build => 1,
+    required   => 1,
 );
+
+# backward compability
+has email => ( isa => 'Str', is => 'rw' );
+has pass => ( isa => 'Str', is => 'rw' );
 
 has is_authed => (
     isa       => 'Bool',
@@ -63,18 +69,22 @@ has gdata_version => (
     default   => '3.0',
 );
 
+has server => (
+    is         => 'ro',
+    lazy_build => 1,
+);
 
-sub BUILD {
+sub _build_server {
     my $self = shift;
-    WWW::Google::Contacts::Server->initialize(
-        username => $self->email,
-        password => $self->pass,
+    return WWW::Google::Contacts::Server->initialize(
+        username => $self->username,
+        password => $self->password,
     );
 }
 
 sub new_contact {
     my $self = shift;
-    return WWW::Google::Contacts::Contact->new();
+    return WWW::Google::Contacts::Contact->new( @_ );
 }
 
 sub contacts {
@@ -84,197 +94,103 @@ sub contacts {
     return $list;
 }
 
-# TODO - update all subs below to use new code
+# All code below is for backwards compability
+
+sub _build_username {
+    my $self = shift;
+    return $self->email if $self->email;
+    croak "Attribute (username) required";
+}
+
+sub _build_password {
+    my $self = shift;
+    return $self->pass if $self->pass;
+    croak "Attribute (password) required";
+}
 
 sub login {
     my ($self, $email, $pass) = @_;
-
-    $email ||= $self->email;
-    $pass  ||= $self->pass;
-    $email or croak 'login(email, pass)';
-    $pass  or croak 'login(email, pass)';
-
-    return 1 if $self->is_authed;
-
-    my $resp = $self->authsub->login($email, $pass);
-    unless ( $resp and $resp->is_success ) {
-        return 0;
-    }
-
     $self->email( $email );
     $self->pass( $pass );
-    $self->is_authed( 1 );
+    $self->server->authenticate;
     return 1;
 }
 
 sub create_contact {
     my $self = shift;
-    my $contact = scalar @_ % 2 ? shift : { @_ };
+    my $data = scalar @_ % 2 ? shift : { @_ };
 
-    $self->login() or croak 'Authentication failed';
+    my $contact = $self->new_contact;
+    return $self->_create_or_update_contact( $contact, $data );
+}
 
-    my $data = {
-        'atom:entry' => {
-            'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-            'xmlns:gd'   => 'http://schemas.google.com/g/2005',
-            'atom:category' => {
-                'scheme' => 'http://schemas.google.com/g/2005#kind',
-                'term'   => 'http://schemas.google.com/contact/2008#contact'
-            },
-            'gd:name' => {
-                'gd:givenName'  => [ $contact->{givenName} ],
-                'gd:familyName' => [ $contact->{familyName} ],
-                'gd:fullName'   => [ $contact->{fullName} ],
-            },
-            'atom:content' => {
-                type => 'text',
-                content => $contact->{Notes},
-            },
-            'gd:email' => [
-                {
-                    rel => 'http://schemas.google.com/g/2005#work',
-                    primary => 'true',
-                    address => $contact->{primaryMail},
-                    displayName => $contact->{displayName},
-                }
-            ],
-        },
-    };
+sub _create_or_update_contact {
+    my ($self, $contact, $data) = @_;
+
+    $contact->given_name( $data->{ givenName } );
+    $contact->family_name( $data->{ familyName } );
+    $contact->notes( $data->{Notes} );
+    $contact->email({
+        type => "work",
+        primary => 1,
+        value => $data->{ primaryMail },
+        display_name => $data->{ displayName },
+    });
     if ( $contact->{secondaryMail} ) {
-        push @{ $data->{'atom:entry'}->{'gd:email'} }, {
-            rel => 'http://schemas.google.com/g/2005#home',
-            address => $contact->{secondaryMail},
-        }
+        $contact->add_email({
+            type => "home",
+            value => $data->{ secondaryMail },
+        });
     }
-    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
-    print STDERR $xml . "\n" if $self->debug;
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->gdata_version;
-    my $url = 'http://www.google.com/m8/feeds/contacts/default/full';
-    my $resp =$self->ua->post( $url, %headers, Content => $xml );
-    print STDERR $resp->content . "\n" if $self->debug;
-    return ($resp->code == 201) ? 1 : 0;
+#    if ( $contact->{groupMembershipInfo} ) {
+#        $data->{'atom:entry'}->{'gContact:groupMembershipInfo'} = {
+#            deleted => 'false',
+#            href => $contact->{groupMembershipInfo}
+#        };
+#    }
+    if ( $contact->create_or_update ) {
+        return 1;
+    }
+    return 0;
 }
 
 sub get_contacts {
     my $self = shift;
-    my $args = scalar @_ % 2 ? shift : { @_ };
 
-    $self->login() or croak 'Authentication failed';
-
-    $args->{'alt'} = 'atom'; # must be atom
-    $args->{'max-results'} ||= 9999;
-    my $group = delete $args->{group} || 'full';
-    my $url = sprintf( 'http://www.google.com/m8/feeds/contacts/default/%s?v=3.0', uri_escape($group) );
-    foreach my $key (keys %$args) {
-        $url .= '&' . uri_escape($key) . '=' . uri_escape($args->{$key});
-    }
-    my $resp =$self->ua->get( $url, $self->authsub->auth_params );
-    my $content = $resp->content;
-    print STDERR $content . "\n" if $self->debug;
-    my $data = $self->xmls->XMLin($content, ForceArray => ['entry', 'gd:email', 'gContact:groupMembershipInfo'], SuppressEmpty => undef);
-
+    my $list = $self->contacts;
     my @contacts;
-    foreach my $id (keys %{ $data->{entry} } ) {
-        my $d = $data->{entry}->{$id};
-        $d->{id} = $id;
+    foreach my $c ( @{ $list->contacts } ) {
+        my $d = $c;
         $d->{name} = $d->{'gd:name'};
         $d->{email} = $d->{'gd:email'};
         $d->{groupMembershipInfo} = $d->{'gContact:groupMembershipInfo'};
         push @contacts, $d;
     }
-
     return @contacts;
 }
 
 sub get_contact {
     my ($self, $id) = @_;
 
-    $self->login() or croak 'Authentication failed';
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'GData-Version'} = $self->gdata_version;
-    my $resp =$self->ua->get( $id, %headers );
-    print $resp->content . "\n" if $self->debug;
-    my $data = $self->xmls->XMLin($resp->content, SuppressEmpty => undef);
+    my $contact = $self->new_contact( id => $id )->retrieve;
+    my $data = $contact->raw_data_for_backwards_compability;
+    $data->{name} = $data->{'gd:name'};
+    $data->{email} = $data->{'gd:email'};
+    $data->{groupMembershipInfo} = $data->{'gContact:groupMembershipInfo'};
     return $data;
 }
 
 sub update_contact {
     my ($self, $id, $contact) = @_;
 
-    $self->login() or croak 'Authentication failed';
-
-    my $data = {
-        'atom:entry' => {
-            'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-            'xmlns:gd'   => 'http://schemas.google.com/g/2005',
-            'atom:category' => {
-                'scheme' => 'http://schemas.google.com/g/2005#kind',
-                'term'   => 'http://schemas.google.com/contact/2008#contact'
-            },
-            id => [ $id ],
-            'gd:name' => {
-                'gd:givenName'  => [ $contact->{givenName} ],
-                'gd:familyName' => [ $contact->{familyName} ],
-                'gd:fullName'   => [ $contact->{fullName} ],
-            },
-            'atom:content' => {
-                type => 'text',
-                content => $contact->{Notes},
-            },
-            'gd:email' => [
-                {
-                    rel => 'http://schemas.google.com/g/2005#work',
-                    primary => 'true',
-                    address => $contact->{primaryMail},
-                    displayName => $contact->{displayName},
-                }
-            ],
-            'link' => [
-                {
-                    rel  => 'self',
-                    type => 'application/atom+xml',
-                    href => $id,
-                },
-                {
-                    rel  => 'edit',
-                    type => 'application/atom+xml',
-                    href => $id,
-                },
-            ],
-        },
-    };
-    if ( $contact->{secondaryMail} ) {
-        push @{ $data->{'atom:entry'}->{'gd:email'} }, {
-            rel => 'http://schemas.google.com/g/2005#home',
-            address => $contact->{secondaryMail},
-        }
-    }
-    if ( $contact->{groupMembershipInfo} ) {
-        $data->{'atom:entry'}->{'gContact:groupMembershipInfo'} = {
-            deleted => 'false',
-            href => $contact->{groupMembershipInfo}
-        };
-    }
-    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
-    print $xml . "\n" if $self->debug;
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->gdata_version;
-    $headers{'If-Match'} = '*';
-    $headers{'X-HTTP-Method-Override'} = 'PUT';
-    my $resp =$self->ua->post( $id, %headers, Content => $xml );
-    print $resp->content . "\n" if $self->debug;
-    return ($resp->code == 200) ? 1 : 0;
+    my $c = $self->new_contact( id => $id )->retrieve;
+    return $self->_create_or_update_contact( $c, $contact );
 }
 
 sub delete_contact {
     my ($self, $id) = @_;
 
+    $self->new_contact( id => $id )->delete;
     $self->_delete($id);
 }
 
