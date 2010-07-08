@@ -215,147 +215,61 @@ sub delete_contact {
     my ($self, $id) = @_;
 
     $self->new_contact( id => $id )->delete;
-    $self->_delete($id);
 }
 
 sub get_groups {
     my $self = shift;
-    my $args = scalar @_ % 2 ? shift : { @_ };
 
-    $self->login() or croak 'Authentication failed';
-
-    $args->{'alt'} = 'atom'; # must be atom
-    $args->{'max-results'} ||= 9999;
-    my $url  = 'http://www.google.com/m8/feeds/groups/default/full?v=3.0';
-    foreach my $key (keys %$args) {
-        $url .= '&' . uri_escape($key) . '=' . uri_escape($args->{$key});
-    }
-    my $resp =$self->ua->get( $url, $self->authsub->auth_params );
-    my $content = $resp->content;
-    print $content . "\n" if $self->debug;
-    my $data = $self->xmls->XMLin($content, SuppressEmpty => undef);
-
+    my $list = $self->groups;
     my @groups;
-    foreach my $id (keys %{ $data->{entry} } ) {
-        my $d = $data->{entry}->{$id};
+    foreach my $d ( @{ $list->elements } ) {
         push @groups, {
-            id => $id,
+            id => $d->{id},
             title   => $d->{title},
             updated => $d->{updated},
             exists $d->{'gContact:systemGroup'} ? ('gContact:systemGroup' => $d->{'gContact:systemGroup'}->{'id'}) : (),
-        };
+        }
     }
-
     return @groups;
 }
 
 sub get_group {
     my ($self, $id) = @_;
 
-    $self->login() or croak 'Authentication failed';
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'GData-Version'} = $self->gdata_version;
-    my $resp =$self->ua->get( $id, %headers );
-    print $resp->content . "\n" if $self->debug;
-    my $data = $self->xmls->XMLin($resp->content, SuppressEmpty => undef);
+    my $group = $self->new_group( id => $id )->retrieve;
+    my $data = $group->raw_data_for_backwards_compability;
     return $data;
+}
+
+sub _create_or_update_group {
+    my ($self, $group, $data) = @_;
+
+    $group->title( $data->{ title } );
+    if ( $group->create_or_update ) {
+        return 1;
+    }
+    return 0;
 }
 
 sub create_group {
     my $self = shift;
-    my $contact = scalar @_ % 2 ? shift : { @_ };
+    my $data = scalar @_ % 2 ? shift : { @_ };
 
-    $self->login() or croak 'Authentication failed';
-
-    my $data = {
-        'atom:entry' => {
-            'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-            'xmlns:gd'   => 'http://schemas.google.com/g/2005',
-            'atom:category' => {
-                'scheme' => 'http://schemas.google.com/g/2005#kind',
-                'term'   => 'http://schemas.google.com/contact/2008#group'
-            },
-            'atom:title' => {
-                type => 'text',
-                content => $contact->{title},
-            }
-        },
-    };
-    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
-    print $xml . "\n" if $self->debug;
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->gdata_version;
-    my $url = 'http://www.google.com/m8/feeds/groups/default/full';
-    my $resp =$self->ua->post( $url, %headers, Content => $xml );
-    print $resp->content . "\n" if $self->debug;
-    return ($resp->code == 201) ? 1 : 0;
+    my $group = $self->new_group;
+    return $self->_create_or_update_group( $group, $data );
 }
 
 sub update_group {
     my ($self, $id, $args) = @_;
 
-    $self->login() or croak 'Authentication failed';
-
-    my $data = {
-        'atom:entry' => {
-            'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-            'xmlns:gd'   => 'http://schemas.google.com/g/2005',
-            'atom:category' => {
-                'scheme' => 'http://schemas.google.com/g/2005#kind',
-                'term'   => 'http://schemas.google.com/contact/2008#group'
-            },
-            id => [ $id ],
-            'atom:title' => {
-                type => 'text',
-                content => $args->{title},
-            },
-            'link' => [
-                {
-                    rel  => 'self',
-                    type => 'application/atom+xml',
-                    href => $id,
-                },
-                {
-                    rel  => 'edit',
-                    type => 'application/atom+xml',
-                    href => $id,
-                },
-            ],
-        },
-    };
-    my $xml = $self->xmls->XMLout($data, KeepRoot => 1);
-    print $xml . "\n" if $self->debug;
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'Content-Type'} = 'application/atom+xml';
-    $headers{'GData-Version'} = $self->gdata_version;
-    $headers{'If-Match'} = '*';
-    $headers{'X-HTTP-Method-Override'} = 'PUT';
-    my $resp =$self->ua->post( $id, %headers, Content => $xml );
-    print $resp->content . "\n" if $self->debug;
-    return ($resp->code == 200) ? 1 : 0;
+    my $g = $self->new_group( id => $id )->retrieve;
+    return $self->_create_or_update_group( $g, $args );
 }
 
 sub delete_group {
     my ($self, $id) = @_;
 
-    $self->_delete($id);
-}
-
-sub _delete {
-    my ($self, $id) = @_;
-
-    $self->login() or croak 'Authentication failed';
-
-    my %headers = $self->authsub->auth_params;
-    $headers{'If-Match'} = '*';
-    $headers{'X-HTTP-Method-Override'} = 'DELETE';
-    $headers{'GData-Version'} = $self->gdata_version;
-    my $resp =$self->ua->post($id, %headers);
-    return $resp->code == 200 ? 1 : 0;
+    $self->new_group( id => $id )->delete;
 }
 
 no Moose;
