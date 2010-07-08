@@ -21,7 +21,7 @@ has value => (
     isa       => Str,
     is        => 'rw',
     traits    => [ 'XmlField' ],
-    xml_key   => 'value',
+    xml_key   => 'content',
     predicate => 'has_value',
     required  => 1,
 );
