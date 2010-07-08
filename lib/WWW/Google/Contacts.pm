@@ -365,7 +365,6 @@ __END__
 
 =head1 SYNOPSIS
 
-
     use WWW::Google::Contacts;
 
     my $google = WWW::Google::Contacts->new( username => "your.username", password => "your.password" );
@@ -383,34 +382,51 @@ __END__
     }
 
 
-    my $gcontacts = WWW::Google::Contacts->new();
-    $gcontacts->login('fayland@gmail.com', 'pass') or die 'login failed';
-
-    # create contact
-    my $status = $gcontacts->create_contact( {
-        givenName => 'FayTestG',
-        familyName => 'FayTestF',
-        fullName   => 'Fayland Lam',
-        Notes     => 'just a note',
-        primaryMail => 'primary@example.com',
-        displayName => 'FayTest Dis',
-        secondaryMail => 'secndary@test.com', # optional
-    } );
-    print "Create OK" if $status;
-
-    my @contacts = $gcontacts->get_contacts;
-    foreach my $contact (@contacts) {
-        my @emails = map { $_->{address} } @{ $contact->{email} };
-        print "$contact->{name}->{'gd:fullName'}: " . join(', ', @emails) . "\n";
-        $gcontacts->delete_contact($contact->{id})
-            if $contact->{name}->{'gd:givenName'} eq 'Test';
+    my $groups = $google->groups;
+    while ( my $group = $groups->next ) {
+        print "Title = " . $group->title . "\n";
     }
 
 =head1 DESCRIPTION
 
 This module implements 'Google Contacts Data API' according L<http://code.google.com/apis/contacts/docs/3.0/developers_guide_protocol.html>
 
-=head2 METHODS
+=head1 CONSTRUCTOR
+
+=head2 new( username => .., password => .. )
+
+I<username> and I<password> are required arguments and must be valid Google credentials. If you do not have a Google account
+you can create one at L<https://www.google.com/accounts/NewAccount>.
+
+=head1 METHODS
+
+=head2 $google->new_contact
+
+Returns a new empty L<WWW::Google::Contacts::Contact> object.
+
+=head2 $google->contact( $id )
+
+Given a valid contact ID, returns a L<WWW::Google::Contacts::Contact> object populated with contact data from Google.
+
+=head2 $google->contacts
+
+Returns a L<WWW::Google::Contacts::ContactList> object which can be used to iterate over all your contacts.
+
+=head2 $google->new_group
+
+Returns a new L<WWW::Google::Contacts::Group> object.
+
+=head2 $google->group( $id )
+
+Given a valid group ID, returns a L<WWW::Google::Contacts::Group> object populated with group data from Google.
+
+=head2 $google->groups
+
+Returns a L<WWW::Google::Contacts::GroupList> object which can be used to iterate over all your groups.
+
+=head1 DEPRECATED METHODS
+
+The old module interface is still available, but its use is discouraged. It will eventually be removed from the module.
 
 =over 4
 
@@ -512,7 +528,19 @@ Update a group
 
 =back
 
-=head2 ACKNOWLEDGE
+=head1 SEE ALSO
+
+L<WWW::Google::Contacts::Contact>
+
+L<WWW::Google::Contacts::ContactList>
+
+L<WWW::Google::Contacts::Group>
+
+L<WWW::Google::Contacts::GroupList>
+
+L<http://code.google.com/apis/contacts/docs/3.0/developers_guide_protocol.html>
+
+=head1 ACKNOWLEDGEMENTS
 
 John Clyde - who share me with his code about Contacts API
 
