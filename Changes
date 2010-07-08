@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.06    2010.7.8
+        Big rewrite. Now using Moose.
+        Contacts and groups are now proper objects
+
 0.05    2010.3.5
         make create|update_contact secondaryMail as optional (reported by Logan Hansen)
 
