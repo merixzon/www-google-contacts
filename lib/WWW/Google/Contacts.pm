@@ -421,6 +421,8 @@ John Clyde - who share me with his code about Contacts API
 
 =item Complete link between contact - group
 
+=item Images
+
 =item Fix bugs :)
 
 =back

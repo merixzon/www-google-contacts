@@ -338,3 +338,131 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 __END__
+
+=head1 SYNOPSIS
+
+    use WWW::Google::Contacts;
+
+    my $google = WWW::Google::Contacts->new( username => "your.username", password => "your.password" );
+
+    my $contact = $google->new_contact;
+    $contact->full_name("Emmett Brown");
+
+=head1 METHODS
+
+=head2 $contact->create
+
+Writes the contact to your Google account.
+
+=head2 $contact->retrieve
+
+Fetches contact details from Google account.
+
+=head2 $contact->update
+
+Updates existing contact in your Google account.
+
+=head2 $contact->delete
+
+Deletes contact from your Google account.
+
+=head2 $contact->create_or_update
+
+Creates or updates contact, depending on if it already exists
+
+=head1 ATTRIBUTES
+
+All these attributes are gettable and settable on Contact objects.
+
+=over 4
+
+=item given_name
+
+ $contact->given_name("Arnold");
+
+=item additional_name
+
+ $contact->additional_name("J");
+
+=item family_name
+
+ $contact->family_name("Rimmer");
+
+=item name_prefix
+
+ $contact->name_prefix("Mrs");
+
+=item name_suffix
+
+ $contact->name_suffix("III");
+
+=item full_name
+
+If this is set to what seems like "$given_name $family_name", those attributes will be automatically set.
+
+=item email
+
+Explicitly setting all email details:
+
+ $contact->email({
+   type => "work",
+   value => 'shenanigans@example.com',
+   display_name => 'Shenanigans',
+   primary => 1,
+ });
+
+If you're just setting the email value, type will default to "work" and leave other fields empty.
+
+ $contact->email( 'smeghead@reddwarf.net' );
+
+=item phone_number
+
+Explicitly setting all phone details:
+
+ $contact->phone_number({
+   type => "mobile",
+   value => "+449812323",
+ });
+
+Just setting the value will set type to default value "mobile".
+
+ $contact->phone_number( "+1666666" );
+
+=item im
+
+You can specify all IM details:
+
+ $contact->im({
+   type => "home",
+   protocol => "MSN",
+   value => 'some.email@example.com',
+ });
+
+Or you can just choose to give the IM address:
+
+ $contact->im( 'some.email@example.com' );
+
+=item notes
+
+Arbitrary notes about your friend.
+
+ $contact->notes( "He's a lumberjack, but he's ok" );
+
+=item ...tba
+
+Sorry, haven't documented all attributes yet :(
+
+=back
+
+=head1 AUTHOR
+
+ Magnus Erixzon <magnus@erixzon.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Magnus Erixzon / Fayland Lam.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as perl itself.
+
+=cut
