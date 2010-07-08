@@ -12,7 +12,7 @@ use WWW::Google::Contacts::ContactList;
 use WWW::Google::Contacts::Group;
 use WWW::Google::Contacts::GroupList;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 $VERSION = eval $VERSION;
 
 has username => (
@@ -257,6 +257,8 @@ __END__
 =head1 DESCRIPTION
 
 This module implements 'Google Contacts Data API' according L<http://code.google.com/apis/contacts/docs/3.0/developers_guide_protocol.html>
+
+B<NOTE> This new interface is still quite untested. Please report any bugs.
 
 =head1 CONSTRUCTOR
 
