@@ -18,13 +18,13 @@ has authsub => (
 has username => (
     isa        => 'Str',
     is         => 'ro',
-    required   => 1,
+    default    => sub { $ENV{ GOOGLE_USERNAME } },
 );
 
 has password => (
     isa        => 'Str',
     is         => 'ro',
-    required   => 1,
+    default    => sub { $ENV{ GOOGLE_PASSWORD } },
 );
 
 has gdata_version => (
@@ -68,6 +68,7 @@ sub post {
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->post( $id, %headers, Content => $content );
     unless ( $res->is_success ) {
+        #use Data::Dumper; print Dumper $res;
         croak "POST failed: " . $res->status_line;
     }
     return $res;

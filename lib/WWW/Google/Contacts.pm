@@ -5,11 +5,6 @@ package WWW::Google::Contacts;
 use Moose;
 
 use Carp qw/croak/;
-use URI::Escape;
-use LWP::UserAgent;
-use Net::Google::AuthSub;
-use XML::Simple ();
-use HTTP::Request;
 
 use WWW::Google::Contacts::Server;
 use WWW::Google::Contacts::Contact;
@@ -20,55 +15,14 @@ use WWW::Google::Contacts::GroupList;
 our $VERSION = '0.05';
 $VERSION = eval $VERSION;
 
-has ua => (
-    is        => 'ro',
-    default   => sub { LWP::UserAgent->new },
-);
-
-has authsub => (
-    is        => 'ro',
-    default   => sub { Net::Google::AuthSub->new(service => 'cp') },
-);
-
-has xmls => (
-    is        => 'ro',
-    default   => sub { XML::Simple->new },
-);
-
-has debug => (
-    isa       => 'Bool',
-    is        => 'ro',
-    default   => 0,
-);
-
 has username => (
     isa        => 'Str',
-    is         => 'ro',
-    lazy_build => 1,
-    required   => 1,
+    is         => 'rw',
 );
 
 has password => (
     isa        => 'Str',
-    is         => 'ro',
-    lazy_build => 1,
-    required   => 1,
-);
-
-# backward compability
-has email => ( isa => 'Str', is => 'rw' );
-has pass => ( isa => 'Str', is => 'rw' );
-
-has is_authed => (
-    isa       => 'Bool',
-    is        => 'rw',
-    default   => 0,
-);
-
-has gdata_version => (
-    isa       => 'Str',
-    is        => 'ro',
-    default   => '3.0',
+    is         => 'rw',
 );
 
 has server => (
@@ -76,12 +30,17 @@ has server => (
     lazy_build => 1,
 );
 
+# backward compability
+has email => ( isa => 'Str', is => 'rw', trigger => sub { $_[0]->username( $_[1] ) } );
+has pass  => ( isa => 'Str', is => 'rw', trigger => sub { $_[0]->password( $_[1] ) } );
+
 sub _build_server {
     my $self = shift;
-    return WWW::Google::Contacts::Server->initialize(
-        username => $self->username,
-        password => $self->password,
-    );
+    my $args = {};
+    foreach my $a (qw( username password )) {
+        $args->{ $a } = $self->$a if $self->$a;
+    }
+    return WWW::Google::Contacts::Server->initialize( $args );
 }
 
 sub new_contact {
@@ -119,18 +78,6 @@ sub groups {
 }
 
 # All code below is for backwards compability
-
-sub _build_username {
-    my $self = shift;
-    return $self->email if $self->email;
-    croak "Attribute (username) required";
-}
-
-sub _build_password {
-    my $self = shift;
-    return $self->pass if $self->pass;
-    croak "Attribute (password) required";
-}
 
 sub login {
     my ($self, $email, $pass) = @_;
@@ -286,12 +233,18 @@ __END__
     my $contact = $google->new_contact;
     $contact->full_name("Emmett Brown");
     $contact->name_prefix("Dr");
+    $contact->email('doctor@timetravel.org');
     $contact->hobby("Time travel");
+    $contact->jot([ "Went back in time", "Went forward in time", "Became blacksmith" ]),
     $contact->create;
 
     my @contacts = $google->contacts->search({ given_name => "Emmett" });
     foreach my $c ( @contacts ) {
-        print "The good doctor has gone back to the future\n";
+        print "Got the following jots about the good doctor\n";
+        foreach my $jot ( @{ $c->jot } ) {
+            print "Jot: " . $jot->value . "\n";
+        }
+        print "And now he goes back to the future\n";
         $c->delete;
     }
 
