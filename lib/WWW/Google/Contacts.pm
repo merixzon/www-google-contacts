@@ -365,7 +365,23 @@ __END__
 
 =head1 SYNOPSIS
 
+
     use WWW::Google::Contacts;
+
+    my $google = WWW::Google::Contacts->new( username => "your.username", password => "your.password" );
+
+    my $contact = $google->new_contact;
+    $contact->full_name("Emmett Brown");
+    $contact->name_prefix("Dr");
+    $contact->hobby("Time travel");
+    $contact->create;
+
+    my @contacts = $google->contacts->search({ given_name => "Emmett" });
+    foreach my $c ( @contacts ) {
+        print "The good doctor has gone back to the future\n";
+        $c->delete;
+    }
+
 
     my $gcontacts = WWW::Google::Contacts->new();
     $gcontacts->login('fayland@gmail.com', 'pass') or die 'login failed';
@@ -503,6 +519,7 @@ John Clyde - who share me with his code about Contacts API
 =head1 AUTHOR
 
   Fayland Lam <fayland@gmail.com>
+  Magnus Erixzon <magnus@erixzon.com>
 
 =head1 COPYRIGHT AND LICENSE
 
