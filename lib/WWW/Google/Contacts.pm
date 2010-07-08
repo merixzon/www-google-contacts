@@ -411,6 +411,20 @@ L<http://code.google.com/apis/contacts/docs/3.0/developers_guide_protocol.html>
 
 John Clyde - who share me with his code about Contacts API
 
+=head1 TODO
+
+=over 4
+
+=item More POD
+
+=item Unit tests. Very lame right now
+
+=item Complete link between contact - group
+
+=item Fix bugs :)
+
+=back
+
 =head1 AUTHOR
 
   Fayland Lam <fayland@gmail.com>
