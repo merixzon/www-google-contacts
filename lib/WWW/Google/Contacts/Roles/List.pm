@@ -56,6 +56,7 @@ sub search {
     foreach my $elem ( @{ $self->elements } ) {
         my $obj = $class->new( server => $self->server );
         $obj->set_from_server( $elem );
+        $obj->_set_id( $elem->{ id } );
         foreach my $key ( keys %{ $search } ) {
             next ELEM unless ( defined $obj->$key );
             next ELEM unless ( $obj->$key eq $search->{ $key } );
