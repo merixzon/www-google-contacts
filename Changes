@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.08
+        add Crypt::SSLeay as requirement (reported by Willem de Groot)
+
 0.07    2010.7.8
         Remove things that shouldn't be in distribution
 
