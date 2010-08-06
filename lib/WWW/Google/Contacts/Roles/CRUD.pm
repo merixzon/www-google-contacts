@@ -20,6 +20,7 @@ sub as_xml {
         },
     };
     my $xmls = XML::Simple->new;
+
     my $xml = $xmls->XMLout( $entry, KeepRoot => 1 );
     return $xml;
 }
@@ -41,7 +42,7 @@ sub create {
     my $res = $self->server->post( $self->create_url, $xml );
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
-    $self->_set_id( $data->{ id } );
+    $self->set_from_server( $data );
     1;
 }
 
@@ -62,7 +63,7 @@ sub update {
     croak "No id set" unless $self->id;
 
     my $xml = $self->as_xml;
-    $self->server->put( $self->id, $xml );
+    $self->server->put( $self->id, $self->etag, $xml );
     $self;
 }
 
@@ -70,7 +71,7 @@ sub delete {
     my $self = shift;
     croak "No id set" unless $self->id;
 
-    $self->server->delete( $self->id );
+    $self->server->delete( $self->id, $self->etag );
     1;
 }
 

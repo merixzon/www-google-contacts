@@ -38,7 +38,37 @@ has id => (
     is         => 'ro',
     writer     => '_set_id',
     predicate  => 'has_id',
+    traits     => [ 'XmlField' ],
+    xml_key    => 'id',
 );
+
+has etag => (
+    isa        => Str,
+    is         => 'ro',
+    writer     => '_set_etag',
+    predicate  => 'has_etag',
+    traits     => [ 'XmlField' ],
+    xml_key    => 'gd:etag',
+    include_in_xml => 0, # This is set in HTTP headers
+);
+
+has link => (
+    # TODO - do it properly. See trigger shenanigans
+    is         => 'rw',
+    trigger    => \&_set_link,
+    traits     => [ 'XmlField' ],
+    xml_key    => 'link',
+    include_in_xml => 0,
+);
+
+sub _set_link {
+    my ($self, $link) = @_;
+    foreach my $l ( @{ $link } ) {
+        if ( $l->{ rel } eq 'self' ) {
+            $self->_set_id( $l->{ href } );
+        }
+    }
+}
 
 has category => (
     isa        => Category,

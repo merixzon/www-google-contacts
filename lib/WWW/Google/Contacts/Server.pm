@@ -75,25 +75,26 @@ sub post {
 }
 
 sub put {
-    my ($self, $id, $content) = @_;
+    my ($self, $id, $etag, $content) = @_;
 
     my %headers = $self->authsub->auth_params;
     $headers{'Content-Type'} = 'application/atom+xml';
     $headers{'GData-Version'} = $self->gdata_version;
-    $headers{'If-Match'} = '*';
+    $headers{'If-Match'} = $etag;
     $headers{'X-HTTP-Method-Override'} = 'PUT';
     my $res = $self->ua->post( $id, %headers, Content => $content );
     unless ( $res->is_success ) {
+        use Data::Dumper; print Dumper $res;
         croak "PUT failed: " . $res->status_line;
     }
     return $res;
 }
 
 sub delete {
-    my ($self, $id) = @_;
+    my ($self, $id, $etag) = @_;
 
     my %headers = $self->authsub->auth_params;
-    $headers{'If-Match'} = '*';
+    $headers{'If-Match'} = $etag;
     $headers{'X-HTTP-Method-Override'} = 'DELETE';
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->post($id, %headers);

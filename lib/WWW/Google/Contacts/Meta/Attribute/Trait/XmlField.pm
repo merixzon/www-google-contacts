@@ -21,6 +21,12 @@ has is_element => (
     default   => sub { 0 },
 );
 
+has include_in_xml => (
+    isa       => 'Bool',
+    is        => 'ro',
+    default   => sub { 1 },
+);
+
 no Moose::Role;
 
 package Moose::Meta::Attribute::Custom::Trait::XmlField;

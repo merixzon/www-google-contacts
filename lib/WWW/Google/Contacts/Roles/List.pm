@@ -90,8 +90,7 @@ sub _build_elements {
     my $content = $res->content;
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($content, SuppressEmpty => undef);
-    # get the id in there...
-    my $array = [ map { { %{ $data->{ entry }{ $_ } }, id => $_ } } keys %{ $data->{ entry } } ];
+    my $array = [ values %{ $data->{ entry } } ];
 
     # ..lots of overhead to bless them all now.
     #my $class = $self->element_class;

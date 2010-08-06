@@ -34,6 +34,8 @@ sub to_xml_hashref {
 
     my $to_return = {};
     foreach my $attr ( $self->xml_attributes ) {
+        next unless $attr->include_in_xml;
+
         my $predicate = $attr->predicate;
 
         next if defined $predicate
@@ -58,8 +60,14 @@ sub set_from_server {
 
     foreach my $attr ( $self->xml_attributes ) {
         if ( defined $data->{ $attr->xml_key } ) {
-            my $name = $attr->name;
-            $self->$name( $data->{ $attr->xml_key } );
+            if ( my $writer = $attr->writer ) {
+                # write attributes that are read only to the user
+                $self->$writer( $data->{ $attr->xml_key } );
+            }
+            else {
+                my $name = $attr->name;
+                $self->$name( $data->{ $attr->xml_key } );
+            }
         }
     }
     return $self;
