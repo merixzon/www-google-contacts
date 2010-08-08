@@ -61,10 +61,10 @@ sub get {
 }
 
 sub post {
-    my ($self, $id, $content) = @_;
+    my ($self, $id, $etag, $content_type, $content) = @_;
 
     my %headers = $self->authsub->auth_params;
-    $headers{'Content-Type'} = 'application/atom+xml';
+    $headers{'Content-Type'} = $content_type;
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->post( $id, %headers, Content => $content );
     unless ( $res->is_success ) {
@@ -75,10 +75,10 @@ sub post {
 }
 
 sub put {
-    my ($self, $id, $etag, $content) = @_;
+    my ($self, $id, $etag, $content_type, $content) = @_;
 
     my %headers = $self->authsub->auth_params;
-    $headers{'Content-Type'} = 'application/atom+xml';
+    $headers{'Content-Type'} = $content_type;
     $headers{'GData-Version'} = $self->gdata_version;
     $headers{'If-Match'} = $etag;
     $headers{'X-HTTP-Method-Override'} = 'PUT';

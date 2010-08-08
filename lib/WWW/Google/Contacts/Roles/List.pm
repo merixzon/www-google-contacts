@@ -6,6 +6,8 @@ use Carp qw( croak );
 use XML::Simple ();
 use URI::Escape;
 
+use WWW::Google::Contacts::Server;
+
 requires 'baseurl', 'element_class';
 
 has elements => (
@@ -16,7 +18,7 @@ has elements => (
 
 has server => (
     is         => 'ro',
-    required   => 1,
+    default    => sub { WWW::Google::Contacts::Server->instance },
 );
 
 has pointer => (
@@ -54,7 +56,7 @@ sub search {
     my $to_ret = [];
     ELEM:
     foreach my $elem ( @{ $self->elements } ) {
-        my $obj = $class->new( server => $self->server );
+        my $obj = $class->new( );
         $obj->set_from_server( $elem );
         $obj->_set_id( $elem->{ id } );
         foreach my $key ( keys %{ $search } ) {
@@ -72,7 +74,7 @@ sub next {
     my $next = $self->elements->[ $self->pointer ];
     $self->pointer( $self->pointer+1 );
     my $class = $self->element_class;
-    return $class->new( server => $self->server )->set_from_server( $next );
+    return $class->new( )->set_from_server( $next );
 }
 
 sub _build_elements {
@@ -91,6 +93,10 @@ sub _build_elements {
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($content, SuppressEmpty => undef);
     my $array = [ values %{ $data->{ entry } } ];
+
+    #use Data::Dumper;
+    #print Dumper $array->[0];
+    #die;
 
     # ..lots of overhead to bless them all now.
     #my $class = $self->element_class;

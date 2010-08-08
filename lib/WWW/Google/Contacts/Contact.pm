@@ -24,6 +24,7 @@ use WWW::Google::Contacts::Types qw(
                                        Relation        ArrayRefOfRelation
                                        UserDefined     ArrayRefOfUserDefined
                                        Website         ArrayRefOfWebsite
+                                       Photo
                                );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
@@ -53,7 +54,6 @@ has etag => (
 );
 
 has link => (
-    # TODO - do it properly. See trigger shenanigans
     is         => 'rw',
     trigger    => \&_set_link,
     traits     => [ 'XmlField' ],
@@ -61,14 +61,28 @@ has link => (
     include_in_xml => 0,
 );
 
+# What to do with different link types
+my $link_map = {
+    'self'
+        => sub { my ($self,$link) = @_; $self->_set_id( $link->{ href } ) },
+    'http://schemas.google.com/contacts/2008/rel#photo'
+        => sub { my ($self,$link) = @_; $self->photo( $link ) },
+};
+
 sub _set_link {
-    my ($self, $link) = @_;
-    foreach my $l ( @{ $link } ) {
-        if ( $l->{ rel } eq 'self' ) {
-            $self->_set_id( $l->{ href } );
-        }
+    my ($self, $links) = @_;
+    foreach my $link ( @{ $links } ) {
+        next unless ( defined $link_map->{ $link->{ rel } } );
+        my $code = $link_map->{ $link->{ rel } };
+        $self->$code( $link );
     }
 }
+
+has photo => (
+    isa        => Photo,
+    is         => 'rw',
+    coerce     => 1,
+);
 
 has category => (
     isa        => Category,

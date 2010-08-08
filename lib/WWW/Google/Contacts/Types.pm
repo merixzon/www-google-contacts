@@ -23,6 +23,7 @@ use MooseX::Types -declare =>
             Relation        ArrayRefOfRelation
             UserDefined     ArrayRefOfUserDefined
             Website         ArrayRefOfWebsite
+            Photo
     ) ];
 
 use MooseX::Types::Moose qw(Str HashRef ArrayRef Any Undef Bool);
@@ -357,3 +358,9 @@ coerce ArrayRefOfWebsite,
     from Any,
     via { [ to_Website( $_ ) ] };
 
+class_type Photo,
+    { class => 'WWW::Google::Contacts::Photo' };
+
+coerce Photo,
+    from HashRef,
+    via { require WWW::Google::Contacts::Photo; WWW::Google::Contacts::Photo->new( $_ ) };

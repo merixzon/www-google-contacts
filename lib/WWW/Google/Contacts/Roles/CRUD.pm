@@ -4,10 +4,12 @@ use Moose::Role;
 use Carp qw( croak );
 use XML::Simple ();
 
+use WWW::Google::Contacts::Server;
+
 requires 'create_url';
 
 has raw_data_for_backwards_compability => ( is => 'rw' );
-has server => ( is => 'ro', required => 1 );
+has server => ( is => 'ro', default => sub { WWW::Google::Contacts::Server->instance } );
 
 sub as_xml {
     my $self = shift;
@@ -39,7 +41,7 @@ sub create {
     my $self = shift;
 
     my $xml = $self->as_xml;
-    my $res = $self->server->post( $self->create_url, $xml );
+    my $res = $self->server->post( $self->create_url, undef, 'application/atom+xml', $xml );
     my $xmls = XML::Simple->new;
     my $data = $xmls->XMLin($res->content, SuppressEmpty => undef);
     $self->set_from_server( $data );
@@ -63,7 +65,7 @@ sub update {
     croak "No id set" unless $self->id;
 
     my $xml = $self->as_xml;
-    $self->server->put( $self->id, $self->etag, $xml );
+    $self->server->put( $self->id, $self->etag, 'application/atom+xml', $xml );
     $self;
 }
 
