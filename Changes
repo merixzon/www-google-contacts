@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.09    2010.08.08
+	Use ETags when updating contacts
+	Basic getting/setting photos for contacts
+	
 0.08
         add Crypt::SSLeay as requirement (reported by Willem de Groot)
 
