@@ -128,6 +128,11 @@ sub get_contacts {
     my @contacts;
     foreach my $c ( @{ $list->elements } ) {
         my $d = $c;
+        ($d->{id}) =
+            map { $_->{ href } }
+            grep { $_->{ rel } eq 'self' }
+            @{ $d->{ link } }
+        ;
         $d->{name} = $d->{'gd:name'};
         $d->{email} = $d->{'gd:email'};
         $d->{groupMembershipInfo} = $d->{'gContact:groupMembershipInfo'};
@@ -166,6 +171,12 @@ sub get_groups {
     my $list = $self->groups;
     my @groups;
     foreach my $d ( @{ $list->elements } ) {
+        my $link = ref($d->{link}) eq 'ARRAY' ? $d->{link} : [ $d->{link} ];
+        ($d->{id}) =
+            map { $_->{ href } }
+            grep { $_->{ rel } eq 'self' }
+            @{ $link }
+        ;
         push @groups, {
             id => $d->{id},
             title   => $d->{title},
