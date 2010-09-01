@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.10    2010.09.01
+        Bugfix - contact id lost when searching
+	Hide a bunch of modules from pause
+
 0.09    2010.08.08
 	Use ETags when updating contacts
 	Basic getting/setting photos for contacts
