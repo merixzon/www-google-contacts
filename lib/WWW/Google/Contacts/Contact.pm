@@ -459,6 +459,23 @@ If you're just setting the email value, type will default to "work" and leave ot
 
  $contact->email( 'smeghead@reddwarf.net' );
 
+To specify several email addresses, you could either
+
+=over 4
+
+=item * provide them all in an array
+
+ $contact->email([
+    { type => "work", value => 'underpaid@bigcompany.com' },
+    { type => "home", value => 'angryblogger@someblogsite.com' },
+ ]);
+
+=item * call add_email
+
+ $contact->add_email( 'homer@simpson.name' );
+
+=back
+
 =item phone_number
 
 Explicitly setting all phone details:
@@ -471,6 +488,26 @@ Explicitly setting all phone details:
 Just setting the value will set type to default value "mobile".
 
  $contact->phone_number( "+1666666" );
+
+To specify several phone numbers, you could either
+
+=over 4
+
+=item * provide them all in an array
+
+ $contact->phone_number([
+    { type => "mobile", value => "12345" },
+    { type => "home", value => "666" },
+ ]);
+
+=item * call add_phone_number
+
+ $contact->add_phone_number({
+    type => "home",
+    value => "02078712345"
+ });
+
+=back
 
 =item im
 
