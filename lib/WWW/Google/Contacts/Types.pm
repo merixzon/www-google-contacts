@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Types;
+package # hide from PAUSE
+    WWW::Google::Contacts::Types;
 
 use MooseX::Types -declare =>
     [ qw(

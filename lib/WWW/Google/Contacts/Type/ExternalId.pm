@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::ExternalId;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::ExternalId;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

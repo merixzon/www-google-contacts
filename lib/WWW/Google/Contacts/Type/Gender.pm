@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::Gender;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::Gender;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

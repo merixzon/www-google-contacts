@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::CalendarLink;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::CalendarLink;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

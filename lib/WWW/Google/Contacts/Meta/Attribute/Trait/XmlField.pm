@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
+package # hide from PAUSE
+    WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 use Moose::Role;
 

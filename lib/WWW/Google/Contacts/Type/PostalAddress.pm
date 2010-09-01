@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::PostalAddress;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::PostalAddress;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::Website;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::Website;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

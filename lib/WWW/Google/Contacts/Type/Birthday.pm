@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::Birthday;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::Birthday;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

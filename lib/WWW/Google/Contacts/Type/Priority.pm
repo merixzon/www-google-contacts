@@ -1,4 +1,5 @@
-package WWW::Google::Contacts::Type::Priority;
+package # hide from PAUSE
+    WWW::Google::Contacts::Type::Priority;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
