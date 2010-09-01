@@ -1,5 +1,4 @@
-package # hide from PAUSE
-    WWW::Google::Contacts::Type::Base;
+package WWW::Google::Contacts::Type::Base;
 
 use Moose;
 

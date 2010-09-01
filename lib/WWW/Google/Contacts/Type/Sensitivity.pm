@@ -1,5 +1,4 @@
-package # hide from PAUSE
-    WWW::Google::Contacts::Type::Sensitivity;
+package WWW::Google::Contacts::Type::Sensitivity;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

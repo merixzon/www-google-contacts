@@ -1,5 +1,4 @@
-package # hide from PAUSE
-    WWW::Google::Contacts::Type::Language;
+package WWW::Google::Contacts::Type::Language;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

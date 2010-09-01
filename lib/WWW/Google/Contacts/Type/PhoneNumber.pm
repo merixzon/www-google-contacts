@@ -1,5 +1,4 @@
-package # hide from PAUSE
-    WWW::Google::Contacts::Type::PhoneNumber;
+package WWW::Google::Contacts::Type::PhoneNumber;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

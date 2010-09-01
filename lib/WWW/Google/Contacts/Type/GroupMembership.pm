@@ -1,5 +1,4 @@
-package # hide from PAUSE
-    WWW::Google::Contacts::Type::GroupMembership;
+package WWW::Google::Contacts::Type::GroupMembership;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );

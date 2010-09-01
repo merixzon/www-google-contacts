@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.11    2010.09.01
+        Hiding didn't do what I expected :-/
+
 0.10    2010.09.01
         Bugfix - contact id lost when searching
 	Hide a bunch of modules from pause

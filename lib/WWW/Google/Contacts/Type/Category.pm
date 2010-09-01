@@ -1,5 +1,4 @@
-package # hide from PAUSE
-    WWW::Google::Contacts::Type::Category;
+package WWW::Google::Contacts::Type::Category;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
