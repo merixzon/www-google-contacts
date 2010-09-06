@@ -12,7 +12,7 @@ use WWW::Google::Contacts::ContactList;
 use WWW::Google::Contacts::Group;
 use WWW::Google::Contacts::GroupList;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 $VERSION = eval $VERSION;
 
 has username => (

@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.12    2010.09.06
+	Update prereqs - Need MooseX::Singleton version 0.25
+	
 0.11    2010.09.01
         Hiding didn't do what I expected :-/
 
