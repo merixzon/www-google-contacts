@@ -13,7 +13,6 @@ has type => (
     traits    => [ 'XmlField' ],
     xml_key   => 'rel',
     predicate => 'has_type',
-    coerce    => 1,
     required  => 1,
 );
 
