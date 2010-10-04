@@ -26,7 +26,7 @@ has uri => (
 sub _build_name {
     my $self = shift;
     die "No URI" unless $self->uri;
-    unless ( $self->uri =~ m{\#(\.*)$} ) {
+    unless ( $self->uri =~ m{\#(.+)$} ) {
         die "Can't parse uri: " . $self->uri;
     }
     return $1;
