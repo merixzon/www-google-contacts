@@ -4,12 +4,10 @@ use Moose::Role;
 use Carp qw( croak );
 use XML::Simple ();
 
-use WWW::Google::Contacts::Server;
-
 requires 'create_url';
 
 has raw_data_for_backwards_compability => ( is => 'rw' );
-has server => ( is => 'ro', default => sub { WWW::Google::Contacts::Server->instance } );
+has server => ( is => 'ro', required => 1 );
 
 sub as_xml {
     my $self = shift;

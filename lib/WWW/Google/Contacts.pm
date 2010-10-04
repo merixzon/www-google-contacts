@@ -18,57 +18,70 @@ $VERSION = eval $VERSION;
 has username => (
     isa        => 'Str',
     is         => 'rw',
+    default    => sub { $ENV{ GOOGLE_USERNAME } },
 );
 
 has password => (
     isa        => 'Str',
     is         => 'rw',
+    default    => sub { $ENV{ GOOGLE_PASSWORD } },
+);
+
+has server => (
+    isa        => 'Object',
+    is         => 'ro',
+    lazy_build => 1,
 );
 
 # backward compability
 has email => ( isa => 'Str', is => 'rw', trigger => sub { $_[0]->username( $_[1] ) } );
 has pass  => ( isa => 'Str', is => 'rw', trigger => sub { $_[0]->password( $_[1] ) } );
 
-sub BUILD {
+sub _build_server {
     my $self = shift;
-    my $args = {};
-    foreach my $a (qw( username password )) {
-        $args->{ $a } = $self->$a if $self->$a;
-    }
-    return WWW::Google::Contacts::Server->initialize( $args );
+    return WWW::Google::Contacts::Server->new({
+        username => $self->username,
+        password => $self->password,
+    });
 }
 
 sub new_contact {
     my $self = shift;
-    return WWW::Google::Contacts::Contact->new( @_ );
+    my $args = ( scalar(@_) == 1 and ref($_[0]) eq 'HASH' )
+        ? { %{$_[0]}, server => $self->server }
+        : { @_, server => $self->server };
+    return WWW::Google::Contacts::Contact->new($args);
 }
 
 sub contact {
     my ($self,$id) = @_;
-    return WWW::Google::Contacts::Contact->new( id => $id)->retrieve;
+    return WWW::Google::Contacts::Contact->new( id => $id, server => $self->server )->retrieve;
 }
 
 sub contacts {
     my $self = shift;
 
-    my $list = WWW::Google::Contacts::ContactList->new( );
+    my $list = WWW::Google::Contacts::ContactList->new( server => $self->server );
     return $list;
 }
 
 sub new_group {
     my $self = shift;
-    return WWW::Google::Contacts::Group->new( @_ );
+    my $args = ( scalar(@_) == 1 and ref($_[0]) eq 'HASH' )
+        ? { %{$_[0]}, server => $self->server }
+        : { @_, server => $self->server };
+    return WWW::Google::Contacts::Group->new( $args );
 }
 
 sub group {
     my ($self,$id) = @_;
-    return WWW::Google::Contacts::Group->new( id => $id)->retrieve;
+    return WWW::Google::Contacts::Group->new( id => $id,server => $self->server )->retrieve;
 }
 
 sub groups {
     my $self = shift;
 
-    my $list = WWW::Google::Contacts::GroupList->new( );
+    my $list = WWW::Google::Contacts::GroupList->new( server => $self->server );
     return $list;
 }
 
@@ -78,7 +91,7 @@ sub login {
     my ($self, $email, $pass) = @_;
     $self->email( $email );
     $self->pass( $pass );
-    my $server = WWW::Google::Contacts::Server->instance;
+    my $server = WWW::Google::Contacts::Server->new;
     $server->authenticate;
     return 1;
 }

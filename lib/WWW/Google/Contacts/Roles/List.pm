@@ -6,8 +6,6 @@ use Carp qw( croak );
 use XML::Simple ();
 use URI::Escape;
 
-use WWW::Google::Contacts::Server;
-
 requires 'baseurl', 'element_class';
 
 has elements => (
@@ -18,7 +16,7 @@ has elements => (
 
 has server => (
     is         => 'ro',
-    default    => sub { WWW::Google::Contacts::Server->instance },
+    required   => 1,
 );
 
 has pointer => (

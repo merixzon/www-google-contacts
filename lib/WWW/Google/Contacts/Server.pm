@@ -1,6 +1,6 @@
 package WWW::Google::Contacts::Server;
 
-use MooseX::Singleton;
+use Moose;
 use LWP::UserAgent;
 use Net::Google::AuthSub;
 use Carp qw( croak );
@@ -18,13 +18,13 @@ has authsub => (
 has username => (
     isa        => 'Str',
     is         => 'ro',
-    default    => sub { $ENV{ GOOGLE_USERNAME } },
+    required   => 1,
 );
 
 has password => (
     isa        => 'Str',
     is         => 'ro',
-    default    => sub { $ENV{ GOOGLE_PASSWORD } },
+    required   => 1,
 );
 
 has gdata_version => (
