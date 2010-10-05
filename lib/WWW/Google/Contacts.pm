@@ -91,7 +91,7 @@ sub login {
     my ($self, $email, $pass) = @_;
     $self->email( $email );
     $self->pass( $pass );
-    my $server = WWW::Google::Contacts::Server->new;
+    my $server = WWW::Google::Contacts::Server->new({ username => $self->email, password => $self->password });
     $server->authenticate;
     return 1;
 }
