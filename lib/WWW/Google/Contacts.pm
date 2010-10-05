@@ -12,9 +12,6 @@ use WWW::Google::Contacts::ContactList;
 use WWW::Google::Contacts::Group;
 use WWW::Google::Contacts::GroupList;
 
-our $VERSION = '0.12';
-$VERSION = eval $VERSION;
-
 has username => (
     isa        => 'Str',
     is         => 'rw',
@@ -431,7 +428,9 @@ L<http://code.google.com/apis/contacts/docs/3.0/developers_guide_protocol.html>
 
 =head1 ACKNOWLEDGEMENTS
 
-John Clyde - who share me with his code about Contacts API
+Fayland Lam - who wrote the first version of this module
+
+John Clyde - who shared his code about Contacts API with Fayland
 
 =head1 TODO
 
@@ -451,12 +450,11 @@ John Clyde - who share me with his code about Contacts API
 
 =head1 AUTHOR
 
-  Fayland Lam <fayland@gmail.com>
   Magnus Erixzon <magnus@erixzon.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Fayland Lam.
+This software is copyright (c) 2010 by Magnus Erixzon.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as perl itself.
