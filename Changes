@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.14    2010.10.06
+	Bugfix, some code was still trying to call Server->instance. Bug reported and fixed by Andrew Sterling Hanenkamp
+	
 0.13	2010.10.06
 	Remove coercion directive on Str [RT#61413] - thanks to Andreas Koenig
 	Server is no longer a singleton [RT#61804] - thanks to Andrew Sterling Hanenkamp
