@@ -1,5 +1,10 @@
 Revision history for WWW-Google-Contacts
 
+0.13	2010.10.06
+	Remove coercion directive on Str [RT#61413] - thanks to Andreas Koenig
+	Server is no longer a singleton [RT#61804] - thanks to Andrew Sterling Hanenkamp
+	Typo fix [RT#61803]
+	
 0.12    2010.09.06
 	Update prereqs - Need MooseX::Singleton version 0.25
 	
