@@ -66,7 +66,7 @@ my $link_map = {
     'self'
         => sub { my ($self,$link) = @_; $self->_set_id( $link->{ href } ) },
     'http://schemas.google.com/contacts/2008/rel#photo'
-        => sub { my ($self,$link) = @_; $self->photo( $link ) },
+        => sub { my ($self,$link) = @_; $self->photo( { %$link, server => $self->server } ) },
 };
 
 sub _set_link {

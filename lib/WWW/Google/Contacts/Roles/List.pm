@@ -71,7 +71,7 @@ sub next {
     my $next = $self->elements->[ $self->pointer ];
     $self->pointer( $self->pointer+1 );
     my $class = $self->element_class;
-    return $class->new( )->set_from_server( $next );
+    return $class->new( server => $self->server )->set_from_server( $next );
 }
 
 sub _build_elements {
