@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.15    2010.10.13
+	Bugfix, support custom types for phone numbers. Thanks to Eric Poulsen for reporting
+
 0.14    2010.10.06
 	Bugfix, some code was still trying to call Server->instance. Bug reported and fixed by Andrew Sterling Hanenkamp
 	
