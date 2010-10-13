@@ -16,6 +16,14 @@ has type => (
     coerce   => 1,
 );
 
+has label => (
+    isa      => Str,
+    is       => 'rw',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'label',
+    predicate => 'has_label',
+);
+
 has value => (
     isa      => Str,
     is       => 'rw',

@@ -54,7 +54,7 @@ sub search {
     my $to_ret = [];
     ELEM:
     foreach my $elem ( @{ $self->elements } ) {
-        my $obj = $class->new( );
+        my $obj = $class->new( server => $self->server );
         $obj->set_from_server( $elem );
         foreach my $key ( keys %{ $search } ) {
             next ELEM unless ( defined $obj->$key );
