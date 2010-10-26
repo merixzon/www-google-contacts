@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.16	2010.10.26
+	Add File::Slurp to prereqs [RT#62396]. Thanks to Gonéri
+
 0.15    2010.10.13
 	Bugfix, support custom types for phone numbers. Thanks to Eric Poulsen for reporting
 
