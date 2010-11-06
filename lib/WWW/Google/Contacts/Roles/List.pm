@@ -3,9 +3,9 @@ package WWW::Google::Contacts::Roles::List;
 use Moose::Role;
 use MooseX::Types::Moose qw( ArrayRef Int );
 use Carp qw( croak );
-use XML::Simple ();
 use URI::Escape;
 use Perl6::Junction qw( any );
+use WWW::Google::Contacts::Data;
 
 requires 'baseurl', 'element_class';
 
@@ -96,9 +96,8 @@ sub _build_elements {
     }
     my $res = $self->server->get( $url );
     my $content = $res->content;
-    my $xmls = XML::Simple->new;
-    my $data = $xmls->XMLin($content, SuppressEmpty => undef);
-    my $array = [ values %{ $data->{ entry } } ];
+    my $data = WWW::Google::Contacts::Data->decode_xml( $content );
+    my $array = $data->{ entry };
 
     #use Data::Dumper;
     #print Dumper $array->[0];
