@@ -377,6 +377,10 @@ sub add_email {
     my ($self,$email) = @_;
     push @{ $self->email }, to_Email( $email );
 }
+sub add_user_defined {
+    my ($self,$user_def) = @_;
+    push @{ $self->user_defined }, to_UserDefined( $user_def );
+}
 
 no Moose;
 __PACKAGE__->meta->make_immutable;

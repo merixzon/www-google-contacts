@@ -32,8 +32,8 @@ foreach my $c ( @contacts ) {
 @contacts = $google->contacts->search({ full_name => "Test user with 2 user def fields" });
 foreach my $c ( @contacts ) {
     is ( scalar @{ $c->user_defined }, 2, "Got one user defined value" );
-    foreach my $def_num (1,2) {
-        my $user_def = shift @{ $c->user_defined };
+    foreach my $def_num (0,1) {
+        my $user_def = $c->user_defined->[0];
         is ( defined $user_def->key, 1, "User defined field [$def_num] got key defined");
         is ( defined $user_def->value, 1, "..and got value defined");
     }
