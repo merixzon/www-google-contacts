@@ -337,6 +337,12 @@ subtype ArrayRefOfUserDefined,
 coerce ArrayRefOfUserDefined,
     from ArrayRef,
     via { [ map { to_UserDefined( $_ ) } @{ $_ } ] },
+    from HashRef,
+    via {
+        my $ref = $_;
+        return [ to_UserDefined( $ref ) ] if ( defined $ref->{ key } );
+        [ map { to_UserDefined({ key => $_, value => $ref->{ $_ }{ value } }) } keys %{ $ref } ]
+    },
     from Any,
     via { [ to_UserDefined( $_ ) ] };
 
