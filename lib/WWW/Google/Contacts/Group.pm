@@ -126,6 +126,14 @@ The title of the group
 
  $group->title("People I'm only 'friends' with because of the damn Facebook");
 
+=item member
+
+An array of members of the group
+
+ foreach my $member (@{ $group->member }) {
+   print $member->full_name . " is a member of the group.\n";
+ }
+
 =back
 
 =head1 AUTHOR

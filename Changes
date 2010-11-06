@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.17	2010.11.06
+	Handle multiple user defined values [RT#62718]. Thanks to Mike Baas
+	Access all group members via $group->member
+
 0.16	2010.10.26
 	Add File::Slurp to prereqs [RT#62396]. Thanks to Gonéri
 
