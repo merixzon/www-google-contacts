@@ -15,6 +15,10 @@ has href => (
     required  => 1,
 );
 
+sub search_field {
+    return 'href';
+}
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
