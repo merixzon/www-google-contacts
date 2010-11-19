@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.18	2010.11.19
+	Refactor xml handling
+	Bug fix, utf8 chars got messed up [RT#63112]. Thanks to Lucas B.
+
 0.17	2010.11.06
 	Handle multiple user defined values [RT#62718]. Thanks to Mike Baas
 	Access all group members via $group->member
