@@ -4,12 +4,13 @@ use strict;
 use warnings;
 
 use XML::Simple ();
+use Encode;
 
 sub decode_xml {
     my ($class, $content) = @_;
 
     my $xmls = XML::Simple->new;
-    my $data = $xmls->XMLin($content, SuppressEmpty => undef, KeyAttr => []);
+    my $data = $xmls->XMLin( encode_utf8($content), SuppressEmpty => undef, KeyAttr => []);
     return $data;
 }
 
