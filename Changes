@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.19	2010.11.24
+	A slight improvement in Contact -> Group membership handing
+
 0.18	2010.11.19
 	Refactor xml handling
 	Bug fix, utf8 chars got messed up [RT#63112]. Thanks to Lucas B.
