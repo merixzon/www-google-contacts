@@ -381,6 +381,21 @@ sub add_user_defined {
     my ($self,$user_def) = @_;
     push @{ $self->user_defined }, to_UserDefined( $user_def );
 }
+sub add_group_membership {
+    my ($self,$group) = @_;
+    push @{ $self->group_membership }, to_GroupMembership( $group );
+}
+
+sub groups {
+    my $self = shift;
+
+    my $to_ret = [];
+    my $membership = $self->group_membership;
+    foreach my $member (@{ $membership }) {
+        push @{ $to_ret }, WWW::Google::Contacts::Group->new( id => $member->href,server => $self->server )->retrieve;
+    }
+    return wantarray ? @{ $to_ret } : $to_ret;
+}
 
 no Moose;
 __PACKAGE__->meta->make_immutable;

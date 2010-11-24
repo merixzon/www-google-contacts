@@ -23,6 +23,16 @@ has id => (
     xml_key    => 'id',
 );
 
+has etag => (
+    isa        => Str,
+    is         => 'ro',
+    writer     => '_set_etag',
+    predicate  => 'has_etag',
+    traits     => [ 'XmlField' ],
+    xml_key    => 'gd:etag',
+    include_in_xml => 0, # This is set in HTTP headers
+);
+
 has category => (
     isa        => Category,
     is         => 'rw',
