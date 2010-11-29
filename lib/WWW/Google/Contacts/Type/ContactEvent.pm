@@ -15,6 +15,14 @@ has type => (
     predicate => 'has_type',
 );
 
+has label => (
+    isa       => Str,
+    is        => 'rw',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'label',
+    predicate => 'has_label',
+);
+
 has when => (
     isa       => When,
     is        => 'rw',
@@ -22,6 +30,7 @@ has when => (
     xml_key   => 'gd:when',
     predicate => 'has_when',
     coerce    => 1,
+    required  => 1,
 );
 
 no Moose;

@@ -385,6 +385,13 @@ sub add_group_membership {
     my ($self,$group) = @_;
     push @{ $self->group_membership }, to_GroupMembership( $group );
 }
+sub add_event {
+    my ($self,$event) = @_;
+    unless ( $self->has_event ) {
+        $self->event([]);
+    }
+    push @{ $self->event }, to_ContactEvent( $event );
+}
 
 sub groups {
     my $self = shift;

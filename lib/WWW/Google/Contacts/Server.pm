@@ -84,7 +84,7 @@ sub put {
     $headers{'X-HTTP-Method-Override'} = 'PUT';
     my $res = $self->ua->post( $id, %headers, Content => $content );
     unless ( $res->is_success ) {
-        #use Data::Dumper; print Dumper $res;
+        use Data::Dumper; print Dumper $res;
         croak "PUT failed: " . $res->status_line;
     }
     return $res;
