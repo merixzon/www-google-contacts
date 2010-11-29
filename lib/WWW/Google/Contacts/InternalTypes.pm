@@ -7,7 +7,7 @@ use MooseX::Types -declare =>
             When
     ) ];
 
-use MooseX::Types::Moose qw(Str Bool);
+use MooseX::Types::Moose qw(Str Bool HashRef);
 
 class_type Rel,
     { class => 'WWW::Google::Contacts::Type::Rel' };
@@ -41,4 +41,10 @@ coerce When,
     via {
         require WWW::Google::Contacts::Type::When;
         WWW::Google::Contacts::Type::When->new( start_time => $_ );
+    },
+    from HashRef,
+    via {
+        return undef unless defined $_->{ startTime };
+        require WWW::Google::Contacts::Type::When;
+        WWW::Google::Contacts::Type::When->new( start_time => $_->{ startTime } );
     };
