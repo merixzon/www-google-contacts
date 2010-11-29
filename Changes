@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.20    2010.11.29
+	Bug fixes around contact events. Thanks to Oliver Enzmann for bug report
+	
 0.19	2010.11.24
 	A slight improvement in Contact -> Group membership handing
 
