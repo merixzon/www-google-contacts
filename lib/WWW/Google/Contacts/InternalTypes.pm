@@ -46,5 +46,8 @@ coerce When,
     via {
         return undef unless defined $_->{ startTime };
         require WWW::Google::Contacts::Type::When;
-        WWW::Google::Contacts::Type::When->new( start_time => $_->{ startTime } );
+        WWW::Google::Contacts::Type::When->new(
+            start_time => $_->{ startTime },
+            defined $_->{ endTime } ? ( end_time => $_->{ endTime } ) : (),
+        );
     };
