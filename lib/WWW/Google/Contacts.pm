@@ -465,8 +465,6 @@ John Clyde - who shared his code about Contacts API with Fayland
 
 =item Unit tests. Very lame right now
 
-=item Complete link between contact - group. halfway there
-
 =item Images
 
 =item Fix bugs :)

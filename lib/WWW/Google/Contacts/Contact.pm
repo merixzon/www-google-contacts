@@ -438,39 +438,74 @@ Deletes contact from your Google account.
 
 =head2 $contact->create_or_update
 
-Creates or updates contact, depending on if it already exists
+Creates or updates contact, depending on if it already exists.
 
 =head1 ATTRIBUTES
 
 All these attributes are gettable and settable on Contact objects.
 
-=over 4
-
-=item given_name
+=head2 given_name
 
  $contact->given_name("Arnold");
 
-=item additional_name
+=head2 additional_name
 
  $contact->additional_name("J");
 
-=item family_name
+=head2 family_name
 
  $contact->family_name("Rimmer");
 
-=item name_prefix
+=head2 name_prefix
 
  $contact->name_prefix("Mrs");
 
-=item name_suffix
+=head2 name_suffix
 
  $contact->name_suffix("III");
 
-=item full_name
+=head2 full_name
 
 If this is set to what seems like "$given_name $family_name", those attributes will be automatically set.
 
-=item email
+=head2 email
+
+$contact->email is, if defined, an array reference with 1 or more Email objects.
+The Email objects have the following accessors;
+
+=over 4
+
+=item type
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+=item label
+
+If you don't want to use the predefined types (defined by Google) you can set this label instead.
+
+=item value
+
+The email address.
+
+=item display_name
+
+An optional display name.
+
+=item primary
+
+A boolean stating whether this is the primary email address.
+
+=back
+
+Example code (set the first work email as the primary address):
+
+ foreach my $email (@{ $contact->email }) {
+   if ( $email->type->name eq 'work' ) {
+     $email->primary(1);
+     last;
+   }
+ }
+
 
 Explicitly setting all email details:
 
@@ -481,11 +516,14 @@ Explicitly setting all email details:
    primary => 1,
  });
 
+Note that this will overwrite any previous email addresses for the contact. To add rather than replace,
+see I<add_email> below.
+
 If you're just setting the email value, type will default to "work" and leave other fields empty.
 
  $contact->email( 'smeghead@reddwarf.net' );
 
-To specify several email addresses, you could either
+To specify several email addresses, you could either;
 
 =over 4
 
@@ -502,7 +540,27 @@ To specify several email addresses, you could either
 
 =back
 
-=item phone_number
+=head2 phone_number
+
+$contact->phone_number is, if defined, an array reference with 1 or more PhoneNumber objects.
+The PhoneNumber objects have the following accessors;
+
+=over 4
+
+=item type
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+=item label
+
+If you don't want to use the predefined types (defined by Google) you can set this label instead.
+
+=item value
+
+The phone number
+
+=back
+
 
 Explicitly setting all phone details:
 
@@ -515,7 +573,7 @@ Just setting the value will set type to default value "mobile".
 
  $contact->phone_number( "+1666666" );
 
-To specify several phone numbers, you could either
+To specify several phone numbers, you could either;
 
 =over 4
 
@@ -535,7 +593,32 @@ To specify several phone numbers, you could either
 
 =back
 
-=item im
+=head2 im (Instant Messaging)
+
+$contact->im is, if defined, an array reference with 1 or more IM objects.
+The IM objects have the following accessors;
+
+=over 4
+
+=item type
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+=item label
+
+If you don't want to use the predefined types (defined by Google) you can set this label instead.
+
+=item protocol
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+Which protocol is used for this IM address. Possible name values include AIM, MSN, YAHOO. SKYPE, QQ, GOOGLE_TALK, ICQ, JABBER.
+
+=item value
+
+Email address for the IM account.
+
+=back
 
 You can specify all IM details:
 
@@ -549,17 +632,154 @@ Or you can just choose to give the IM address:
 
  $contact->im( 'some.email@example.com' );
 
-=item notes
+=head2 organization
+
+$contact->organization is, if defined, an array reference with 1 or more Organization objects.
+The Organization objects have the following accessors;
+
+=over 4
+
+=item type
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+=item label
+
+If you don't want to use the predefined types (defined by Google) you can set this label instead.
+
+=item department
+
+Specifies a department within the organization.
+
+=item job_description
+
+Description of a job within the organization.
+
+=item name
+
+The name of the organization.
+
+=item symbol
+
+Symbol of the organization.
+
+=item title
+
+The title of a person within the organization.
+
+=item primary
+
+Boolean. When multiple organizations extensions appear in a contact kind, indicates which is primary. At most one organization may be primary.
+
+=item where
+
+A place associated with the organization, e.g. office location.
+
+=back
+
+=head2 postal_address
+
+$contact->postal_address is, if defined, an array reference with 1 or more PostalAddress objects.
+The PostalAddress objects have the following accessors;
+
+=over 4
+
+=item type
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+=item label
+
+If you don't want to use the predefined types (defined by Google) you can set this label instead.
+
+=item mail_class
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>.
+
+Classes of mail accepted at the address. Possible name values are I<both>, I<letters>, I<parcels> and I<neither>. Unless specified I<both> is assumed.
+
+=item usage
+
+This is an object in itself, which has 2 accessors; B<name> and B<uri>
+
+The context in which this addess can be used. Possible values are I<general> and I<local>. Local addresses may differ in layout from general addresses, and frequently use local script (as opposed to Latin script) as well, though local script is allowed in general addresses. Unless specified general usage is assumed.
+
+=item primary
+
+Boolean. Specifies the address as primary.
+
+=item agent
+
+The agent who actually receives the mail. Used in work addresses. Also for 'in care of' or 'c/o'.
+
+=item house_name
+
+Used in places where houses or buildings have names (and not necessarily numbers), eg. "The Pillars".
+
+=item street
+
+Can be street, avenue, road, etc. This element also includes the house number and room/apartment/flat/floor number.
+
+=item pobox
+
+Covers actual P.O. boxes, drawers, locked bags, etc. This is usually but not always mutually exclusive with street.
+
+=item neighborhood
+
+This is used to disambiguate a street address when a city contains more than one street with the same name, or to specify a small place whose mail is routed through a larger postal town. In China it could be a county or a minor city.
+
+=item city
+
+Can be city, village, town, borough, etc. This is the postal town and not necessarily the place of residence or place of business.
+
+=item subregion
+
+Handles administrative districts such as U.S. or U.K. counties that are not used for mail addressing purposes. Subregion is not intended for delivery addresses.
+
+=item region
+
+A state, province, county (in Ireland), Land (in Germany), departement (in France), etc.
+
+=item postcode
+
+Postal code. Usually country-wide, but sometimes specific to the city (e.g. "2" in "Dublin 2, Ireland" addresses).
+
+=item country
+
+The name or code of the country.
+
+=item formatted
+
+The full, unstructured postal address.
+
+=back
+
+=head2 billing_information
+
+Specifies billing information of the entity represented by the contact.
+
+=head2 notes
 
 Arbitrary notes about your friend.
 
  $contact->notes( "He's a lumberjack, but he's ok" );
 
-=item ...tba
+=head2 birthday
+
+If defined, returns an object with one accessor;
+
+=over 4
+
+=item when
+
+Birthday date, given in format YYYY-MM-DD (with the year), or --MM-DD (without the year).
+
+=back
+
+=head2 ...tba
 
 Sorry, haven't documented all attributes yet :(
 
-=back
 
 =head1 AUTHOR
 
