@@ -26,8 +26,19 @@ foreach my $g ( @groups ) {
 
         my $email = $member->email->[0];
         ok ( defined $email, "...got an email address");
-        my $type = $email->type;
-        print "Type = $type\n";
+        my $type = $email->type->name;
+        my $newtype = 'home';
+        if ( $type eq 'home' ) {
+            $newtype = 'work';
+        }
+        $email->type( $newtype );
+        $member->update;
+
+        # Now fetch this user again and ensure type has been updated
+        my $update = $google->contact( $member->id );
+        my $upd_email = $update->email->[0];
+        ok ( defined $upd_email, "Updated user got email");
+        is ( $upd_email->type->name, $newtype, "...correct (updated) type");
     }
 }
 
