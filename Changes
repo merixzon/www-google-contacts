@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.21	2010.12.02
+	POD updates
+	
 0.20    2010.11.29
 	Bug fixes around contact events. Thanks to Oliver Enzmann for bug report
 	
