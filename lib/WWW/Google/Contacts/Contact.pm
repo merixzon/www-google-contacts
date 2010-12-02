@@ -418,6 +418,22 @@ __END__
     my $contact = $google->new_contact;
     $contact->full_name("Emmett Brown");
 
+A lot of fields, such as email, phone number and so on, are accessible as array refs.
+
+    foreach my $email (@{ $contact->email }) {
+       print "He got email address: " . $email->value . "\n";
+    }
+
+When you have made changes to your contact, you need to save them back to Google. This is done either
+by a B<create> call (for new contacts) or an B<update> call (for existing contacts).
+
+    $contact->create;
+
+Alternatively, you can use the B<create_or_update> method, which will do the right thing.
+
+    $contact->create_or_update;
+
+
 =head1 METHODS
 
 =head2 $contact->create
@@ -787,7 +803,7 @@ Sorry, haven't documented all attributes yet :(
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Magnus Erixzon / Fayland Lam.
+This software is copyright (c) 2010 by Magnus Erixzon.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as perl itself.
