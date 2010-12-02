@@ -3,16 +3,10 @@ package WWW::Google::Contacts::Type::Rel;
 use Moose;
 use MooseX::Types::Moose qw( Str );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
-use overload '""' => \&to_string;
 
 extends 'WWW::Google::Contacts::Type::Base';
 
 use constant SCHEME => 'http://schemas.google.com/g/2005';
-
-sub to_string {
-    my $self = shift;
-    return $self->name;
-}
 
 has name => (
     isa        => Str,
