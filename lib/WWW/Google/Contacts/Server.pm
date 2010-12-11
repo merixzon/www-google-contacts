@@ -39,6 +39,9 @@ sub _build_authsub {
     my $auth = Net::Google::AuthSub->new(service => 'cp');
     my $res = $auth->login($self->username, $self->password);
     unless ( $res and $res->is_success ) {
+        if ( $res ) {
+            warn $res->{ _response }->content;
+        }
         croak "Authentication failed";
     }
     return $auth;
@@ -68,7 +71,7 @@ sub post {
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->post( $id, %headers, Content => $content );
     unless ( $res->is_success ) {
-        #use Data::Dumper; print Dumper $res;
+        use Data::Dumper; print Dumper $res;
         croak "POST failed: " . $res->status_line;
     }
     return $res;
