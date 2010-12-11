@@ -1,5 +1,10 @@
 Revision history for WWW-Google-Contacts
 
+0.22    2010.12.11
+	Bug fix for empty contact list. Thanks to Mathias Ewald for reporting
+	For types that have ref and label - ensure given value goes to correct attribute
+	More verbosity when failing
+
 0.21	2010.12.02
 	POD updates
 	
