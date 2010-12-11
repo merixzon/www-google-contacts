@@ -1,30 +1,33 @@
 package WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 use Moose::Role;
+use WWW::Google::Contacts::InternalTypes qw( Method );
+use MooseX::Types::Moose qw( Str CodeRef Bool );
 
 has xml_key => (
-    isa      => 'Str',
+    isa      => Str,
     is       => 'ro',
     required => 1,
 );
 
 # Allow attributes to have custom code for transforming to xml
 has to_xml => (
-    isa       => 'CodeRef',
+    isa       => CodeRef,
     is        => 'ro',
     predicate => 'has_to_xml',
 );
 
 has is_element => (
-    isa       => 'Bool',
+    isa       => Bool,
     is        => 'ro',
     default   => sub { 0 },
 );
 
 has include_in_xml => (
-    isa       => 'Bool',
+    isa       => Method,
     is        => 'ro',
-    default   => sub { 1 },
+    default   => sub { sub { 1 } },
+    coerce    => 1,
 );
 
 no Moose::Role;

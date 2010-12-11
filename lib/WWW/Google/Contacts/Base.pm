@@ -34,7 +34,8 @@ sub to_xml_hashref {
 
     my $to_return = {};
     foreach my $attr ( $self->xml_attributes ) {
-        next unless $attr->include_in_xml;
+        my $incl = $attr->include_in_xml;
+        next unless $self->$incl;
 
         my $predicate = $attr->predicate;
 

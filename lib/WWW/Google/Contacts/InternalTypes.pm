@@ -5,9 +5,17 @@ use MooseX::Types -declare =>
             XmlBool
             Rel
             When
+            Method
     ) ];
 
-use MooseX::Types::Moose qw(Str Bool HashRef);
+use MooseX::Types::Moose qw(Str Bool HashRef CodeRef Any);
+
+subtype Method,
+    as CodeRef;
+
+coerce Method,
+    from Any,
+    via { sub { return $_ } };
 
 class_type Rel,
     { class => 'WWW::Google::Contacts::Type::Rel' };

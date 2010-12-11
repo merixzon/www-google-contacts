@@ -44,8 +44,8 @@ foreach my $g ( @groups ) {
         is ( defined $member->full_name, 1, "Member got full name [" . $member->full_name . "]" );
 
         my @user_groups = $member->groups;
-        is ( scalar(grep { $_->title eq "Test group" } @user_groups), 1, "User got the test group");
-        is ( scalar(grep { $_->title eq "Temporary group" } @user_groups), 1, "User got the temporary group");
+        ok ( scalar(grep { $_->title eq "Test group" } @user_groups), "User got the test group");
+        ok ( scalar(grep { $_->title eq "Temporary group" } @user_groups), "User got the temporary group");
     }
 }
 

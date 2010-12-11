@@ -39,6 +39,20 @@ foreach my $g ( @groups ) {
         my $upd_email = $update->email->[0];
         ok ( defined $upd_email, "Updated user got email");
         is ( $upd_email->type->name, $newtype, "...correct (updated) type");
+        is ( $upd_email->label, $newtype, "...and label got the same value");
+
+        # Now change to a custom type
+
+        $upd_email->type( 'spamhaus' );
+        $update->update;
+
+        # Fetch this user again and ensure type has been updated
+        $update = $google->contact( $member->id );
+        $upd_email = $update->email->[0];
+
+        ok ( defined $upd_email, "Updated user got email");
+        is ( $upd_email->label, 'spamhaus', "...correct label");
+        is ( $upd_email->type->name, 'spamhaus', "...type name is also same value");
     }
 }
 

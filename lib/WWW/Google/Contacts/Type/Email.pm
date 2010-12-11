@@ -1,28 +1,15 @@
 package WWW::Google::Contacts::Type::Email;
 
 use Moose;
-use MooseX::Types::Moose qw( Str );
+use MooseX::Types::Moose qw( Str Undef );
 use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
 
-has type => (
-    isa       => Rel,
-    is        => 'rw',
-    traits    => [ 'XmlField' ],
-    xml_key   => 'rel',
-    predicate => 'has_type',
-    coerce    => 1,
-);
-
-has label => (
-    isa      => Str,
-    is       => 'rw',
-    traits    => [ 'XmlField' ],
-    xml_key   => 'label',
-    predicate => 'has_label',
-);
+with 'WWW::Google::Contacts::Roles::HasTypeAndLabel' => {
+    valid_types => [ qw( work home ) ],
+};
 
 has value => (
     isa       => Str,
