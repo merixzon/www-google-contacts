@@ -46,6 +46,8 @@ sub to_xml_hashref {
         my $name = $attr->name;
         my $val = $self->$name;
 
+        next if ( not $val );
+
         $to_return->{ $attr->xml_key } =
             ( blessed($val) and $val->can("to_xml_hashref") ) ? $val->to_xml_hashref
             : ( ref($val) and ref($val) eq 'ARRAY' ) ? [ map { $_->to_xml_hashref } @{ $val } ]

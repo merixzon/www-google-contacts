@@ -88,7 +88,7 @@ coerce PhoneNumber,
     from HashRef,
     via { WWW::Google::Contacts::Type::PhoneNumber->new( $_ ) },
     from Str,
-    via { WWW::Google::Contacts::Type::PhoneNumber->new( type => "mobile", value => $_ ) };
+    via { WWW::Google::Contacts::Type::PhoneNumber->new( value => $_ ) };
 
 subtype ArrayRefOfPhoneNumber,
     as ArrayRef[ PhoneNumber ];
@@ -106,7 +106,7 @@ coerce Email,
     from HashRef,
     via { WWW::Google::Contacts::Type::Email->new( $_ ) },
     from Str,
-    via { WWW::Google::Contacts::Type::Email->new( type => "home", value => $_ ) };
+    via { WWW::Google::Contacts::Type::Email->new( value => $_ ) };
 
 subtype ArrayRefOfEmail,
     as ArrayRef[ Email ];
@@ -142,7 +142,7 @@ coerce Organization,
     from HashRef,
     via { WWW::Google::Contacts::Type::Organization->new( $_ ) },
     from Str,
-    via { WWW::Google::Contacts::Type::Organization->new( type => "work", name => $_ ) };
+    via { WWW::Google::Contacts::Type::Organization->new( name => $_ ) };
 
 subtype ArrayRefOfOrganization,
     as ArrayRef[ Organization ];
@@ -160,7 +160,7 @@ coerce PostalAddress,
     from HashRef,
     via { WWW::Google::Contacts::Type::PostalAddress->new( $_ ) },
     from Str,
-    via { WWW::Google::Contacts::Type::PostalAddress->new( type => "work", formatted => $_ ) };
+    via { WWW::Google::Contacts::Type::PostalAddress->new( formatted => $_ ) };
 
 subtype ArrayRefOfPostalAddress,
     as ArrayRef[ PostalAddress ];

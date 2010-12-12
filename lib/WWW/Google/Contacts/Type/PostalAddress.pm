@@ -8,7 +8,8 @@ use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 extends 'WWW::Google::Contacts::Type::Base';
 
 with 'WWW::Google::Contacts::Roles::HasTypeAndLabel' => {
-    valid_types => [ qw( home work ) ],
+    valid_types => [ qw( home work other ) ],
+    default_type => 'home',
 };
 
 has mail_class => (

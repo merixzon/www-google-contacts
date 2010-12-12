@@ -12,6 +12,7 @@ with 'WWW::Google::Contacts::Roles::HasTypeAndLabel' => {
                          isdn main mobile other_fax pager radio telex tty_tdd
                          work work_fax work_mobile work_pager
                    ) ],
+    default_type => 'mobile',
 };
 
 has value => (

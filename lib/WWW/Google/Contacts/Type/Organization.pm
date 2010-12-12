@@ -8,7 +8,8 @@ use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 extends 'WWW::Google::Contacts::Type::Base';
 
 with 'WWW::Google::Contacts::Roles::HasTypeAndLabel' => {
-    valid_types => [ qw( work ) ],
+    valid_types => [ qw( work other ) ],
+    default_type => 'work',
 };
 
 has department => (
