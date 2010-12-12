@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.23	2010.12.12
+	Set default types in the type definitions
+	Minor bug fixes
+	
 0.22    2010.12.11
 	Bug fix for empty contact list. Thanks to Mathias Ewald for reporting
 	For types that have ref and label - ensure given value goes to correct attribute
