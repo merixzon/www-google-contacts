@@ -37,6 +37,22 @@ foreach my $g ( @groups ) {
     ok ( defined $addr, "Updated user got postal address");
     is ( $addr->city, "London", "...correct city");
     is ( $addr->type->name, "home", "...got the default type");
+
+    $member = $update;
+    $member->postal_address({
+        street   => "Somestreet " . int(rand(100)),
+        city     => "Londonx",
+        type     => '',
+    });
+
+    $member->update;
+
+    # Now fetch this user again and ensure data is valid
+    $update = $google->contact( $member->id );
+    $addr = $update->postal_address->[0];
+    ok ( defined $addr, "Updated user got postal address");
+    is ( $addr->city, "Londonx", "...correct city");
+    is ( $addr->type->name, "home", "...got the default type");
 }
 
 done_testing;

@@ -47,18 +47,28 @@ role {
         my $self = shift;
         return any(@{ $valid_types }) eq $self->type->name ? 1 : 0;
     };
+
+    method default_type => sub {
+        return $default_type;
+    };
 };
 
 # To make sure type and label are always up to date with eachother
 
 sub _type_set {
     my ($self, $type) = @_;
+    if ( $type->name eq '' ) {
+        return $self->type( to_Rel( $self->default_type ) );
+    }
     return if ( defined $self->label and $self->label eq $type->name );
     $self->label( $type->name );
 };
 
 sub _label_set {
     my ($self, $label) = @_;
+    if ( $label eq '' ) {
+        return $self->label( $self->default_type );
+    }
     return if ( defined $self->type and $self->type->name eq $label );
     $self->type( $label );
 };
