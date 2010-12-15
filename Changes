@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.24    2010.12.15
+	If type is set to '', use default value
+	Require at least version 1.09 of Class::MOP
+	
 0.23	2010.12.12
 	Set default types in the type definitions
 	Minor bug fixes
