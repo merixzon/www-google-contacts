@@ -371,25 +371,27 @@ has website => (
 # Stolen from Meta/Attribute/Native/MethodProvider/Array.pm, need coercion
 sub add_phone_number {
     my ($self,$phone) = @_;
+    $self->phone_number([]) unless $self->has_phone_number;
     push @{ $self->phone_number }, to_PhoneNumber( $phone );
 }
 sub add_email {
     my ($self,$email) = @_;
+    $self->email([]) unless $self->has_email;
     push @{ $self->email }, to_Email( $email );
 }
 sub add_user_defined {
     my ($self,$user_def) = @_;
+    $self->user_defined([]) unless $self->has_user_defined;
     push @{ $self->user_defined }, to_UserDefined( $user_def );
 }
 sub add_group_membership {
     my ($self,$group) = @_;
+    $self->group_membership([]) unless $self->has_group_membership;
     push @{ $self->group_membership }, to_GroupMembership( $group );
 }
 sub add_event {
     my ($self,$event) = @_;
-    unless ( $self->has_event ) {
-        $self->event([]);
-    }
+    $self->event([]) unless $self->has_event;
     push @{ $self->event }, to_ContactEvent( $event );
 }
 
@@ -397,7 +399,7 @@ sub groups {
     my $self = shift;
 
     my $to_ret = [];
-    my $membership = $self->group_membership;
+    my $membership = $self->group_membership || [];
     foreach my $member (@{ $membership }) {
         push @{ $to_ret }, WWW::Google::Contacts::Group->new( id => $member->href,server => $self->server )->retrieve;
     }
