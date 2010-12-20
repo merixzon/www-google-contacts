@@ -385,6 +385,11 @@ sub add_user_defined {
     $self->user_defined([]) unless $self->has_user_defined;
     push @{ $self->user_defined }, to_UserDefined( $user_def );
 }
+sub add_event {
+    my ($self,$event) = @_;
+    $self->event([]) unless $self->has_event;
+    push @{ $self->event }, to_ContactEvent( $event );
+}
 sub add_group_membership {
     my ($self,$group) = @_;
     $self->group_membership([]) unless $self->has_group_membership;
@@ -401,11 +406,6 @@ sub add_group_membership {
         $group = shift @groups;
     }
     push @{ $self->group_membership }, to_GroupMembership( $group );
-}
-sub add_event {
-    my ($self,$event) = @_;
-    $self->event([]) unless $self->has_event;
-    push @{ $self->event }, to_ContactEvent( $event );
 }
 
 sub groups {
@@ -811,6 +811,29 @@ Birthday date, given in format YYYY-MM-DD (with the year), or --MM-DD (without t
 
 Sorry, haven't documented all attributes yet :(
 
+=head1 INTERACTION WITH GROUPS
+
+Contacts can belong to 0 or more groups. This section describes how to get and set group memberships.
+
+=head2 $contact->groups
+
+Returns an array reference of all groups, as L<WWW::Google::Contacts::Group> objects.
+
+=head2 $contact->add_group_membership( group )
+
+The I<group> argument can either be:
+
+=over 4
+
+=item An L<WWW::Google::Contacts::Group> object
+
+=item The ID of a group, as a URL
+
+=item The name of a group
+
+=back
+
+Do note that the group has to exist on the Google servers before you can add this membership.
 
 =head1 AUTHOR
 
