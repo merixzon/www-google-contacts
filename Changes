@@ -1,5 +1,10 @@
 Revision history for WWW-Google-Contacts
 
+0.25    2010.12.20
+	While my flights out of London are being cancelled..
+	Minor updates to contact->group interaction
+	A bit of POD to show contact->group interaction
+
 0.24    2010.12.15
 	If type is set to '', use default value
 	Require at least version 1.09 of Class::MOP
