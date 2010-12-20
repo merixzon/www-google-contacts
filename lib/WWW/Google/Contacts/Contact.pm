@@ -27,6 +27,7 @@ use WWW::Google::Contacts::Types qw(
                                        Photo
                                );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
+use Carp;
 
 sub create_url { 'http://www.google.com/m8/feeds/contacts/default/full' }
 
@@ -387,6 +388,18 @@ sub add_user_defined {
 sub add_group_membership {
     my ($self,$group) = @_;
     $self->group_membership([]) unless $self->has_group_membership;
+    if ( not ref($group) and $group !~ m{^http} ) {
+        # It's probably a group name.
+        # As it stands right now, can't deal with this in the coercion, need access to server obj
+        my @groups = WWW::Google::Contacts::GroupList->new( server => $self->server )->search({ title => $group });
+        if ( scalar @groups == 0 ) {
+            croak "Can not find a group with name: $group";
+        }
+        elsif ( scalar @groups > 1 ) {
+            croak "Can not add group membership. Found several groups with group name: $group";
+        }
+        $group = shift @groups;
+    }
     push @{ $self->group_membership }, to_GroupMembership( $group );
 }
 sub add_event {
