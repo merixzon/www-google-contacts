@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.26	2011.02.01
+	Bugfix, some times it would fail to update contact due to 'link' getting included in the xml
+
 0.25    2010.12.20
 	While my flights out of London are being cancelled..
 	Minor updates to contact->group interaction
