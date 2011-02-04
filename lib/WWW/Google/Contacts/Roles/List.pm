@@ -99,9 +99,9 @@ sub _build_elements {
     my $data = WWW::Google::Contacts::Data->decode_xml( $content );
     my $array = $data->{ entry } || [];
 
-    #use Data::Dumper;
-    #print Dumper $array->[0];
-    #die;
+    if ( ref($array) eq 'HASH' ) {
+        $array = [ $array ];
+    }
 
     # ..lots of overhead to bless them all now.
     #my $class = $self->element_class;

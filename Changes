@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.27	2011.02.04
+	Bugfix, when contact list only contains 1 entry. Thanks to Chris Hobbs for reporting
+
 0.26	2011.02.01
 	Bugfix, some times it would fail to update contact due to 'link' getting included in the xml
 
