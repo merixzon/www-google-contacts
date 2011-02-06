@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.28    2011.02.05
+	Remove shit from cpan tarball
+
 0.27	2011.02.04
 	Bugfix, when contact list only contains 1 entry. Thanks to Chris Hobbs for reporting
 
