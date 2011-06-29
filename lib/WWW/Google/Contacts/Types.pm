@@ -316,7 +316,11 @@ class_type Priority,
 
 coerce Priority,
     from Str,
-    via { WWW::Google::Contacts::Type::Priority->new( type => $_ ) };
+    via { WWW::Google::Contacts::Type::Priority->new( type => $_ ) },
+    from Undef,
+    via { WWW::Google::Contacts::Type::Priority->new( type => "normal" ) },
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Priority->new( type => $_->{ rel } ) };
 
 class_type Relation,
     { class => 'WWW::Google::Contacts::Type::Relation' };

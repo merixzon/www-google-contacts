@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.29    2011.06.22
+	Bugfix, in handing of priority [RT#68774]. Thanks to Harvey G. Payne for reporting
+
 0.28    2011.02.05
 	Remove shit from cpan tarball
 
