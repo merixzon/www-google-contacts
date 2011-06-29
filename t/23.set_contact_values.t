@@ -27,6 +27,10 @@ foreach my $g ( @groups ) {
         street   => "Somestreet " . int(rand(100)),
         city     => "London",
         postcode => '',
+        country  => {
+            code => "NO",
+            name => "Norway",
+        },
     });
 
     $member->update;
@@ -37,12 +41,15 @@ foreach my $g ( @groups ) {
     ok ( defined $addr, "Updated user got postal address");
     is ( $addr->city, "London", "...correct city");
     is ( $addr->type->name, "home", "...got the default type");
+    is ( $addr->country->name, "Norway", "...got correct country");
+    is ( $addr->country->code, "NO", "...and correct country code");
 
     $member = $update;
     $member->postal_address({
         street   => "Somestreet " . int(rand(100)),
         city     => "Londonx",
         type     => '',
+        country  => "Sweden",
     });
 
     $member->update;
@@ -53,6 +60,8 @@ foreach my $g ( @groups ) {
     ok ( defined $addr, "Updated user got postal address");
     is ( $addr->city, "Londonx", "...correct city");
     is ( $addr->type->name, "home", "...got the default type");
+    is ( $addr->country->name, "Sweden", "...got correct country");
+    is ( $addr->country->code, undef, "...and no country code, correct");
 }
 
 done_testing;

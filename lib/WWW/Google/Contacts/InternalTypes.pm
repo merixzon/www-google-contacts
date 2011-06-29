@@ -6,6 +6,7 @@ use MooseX::Types -declare =>
             Rel
             When
             Method
+            Country
     ) ];
 
 use MooseX::Types::Moose qw(Str Bool HashRef CodeRef Any);
@@ -58,4 +59,19 @@ coerce When,
             start_time => $_->{ startTime },
             defined $_->{ endTime } ? ( end_time => $_->{ endTime } ) : (),
         );
+    };
+
+class_type Country,
+    { class => 'WWW::Google::Contacts::Type::Country' };
+
+coerce Country,
+    from Str,
+    via {
+        require WWW::Google::Contacts::Type::Country;
+        WWW::Google::Contacts::Type::Country->new( name => $_ );
+    },
+    from HashRef,
+    via {
+        require WWW::Google::Contacts::Type::Country;
+        WWW::Google::Contacts::Type::Country->new( $_ );
     };

@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.30	2011.06.29
+	Bugfix, country can have both name and/or code.
+
 0.29    2011.06.22
 	Bugfix, in handing of priority [RT#68774]. Thanks to Harvey G. Payne for reporting
 

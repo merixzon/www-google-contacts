@@ -777,7 +777,7 @@ Postal code. Usually country-wide, but sometimes specific to the city (e.g. "2" 
 
 =item country
 
-The name or code of the country.
+An object with two accessors; B<name> and B<code>.
 
 =item formatted
 

@@ -2,7 +2,7 @@ package WWW::Google::Contacts::Type::PostalAddress;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
-use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool );
+use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool Country );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
@@ -123,11 +123,12 @@ has postcode => (
 );
 
 has country => (
-    isa       => Str,
+    isa       => Country,
     is        => 'rw',
     traits    => [ 'XmlField' ],
     xml_key   => 'gd:country',
     predicate => 'has_country',
+    coerce    => 1,
     is_element => 1,
 );
 
