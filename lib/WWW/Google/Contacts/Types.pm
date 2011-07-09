@@ -52,6 +52,7 @@ use WWW::Google::Contacts::Type::Priority;
 use WWW::Google::Contacts::Type::Relation;
 use WWW::Google::Contacts::Type::UserDefined;
 use WWW::Google::Contacts::Type::Website;
+use WWW::Google::Contacts::Type::Sensitivity;
 
 class_type Group,
     { class => 'WWW::Google::Contacts::Group' };
@@ -235,7 +236,9 @@ class_type Gender,
 
 coerce Gender,
     from Str,
-    via { WWW::Google::Contacts::Type::Gender->new( value => $_ ) };
+    via { WWW::Google::Contacts::Type::Gender->new( value => $_ ) },
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Gender->new( $_ ) };
 
 class_type GroupMembership,
     { class => 'WWW::Google::Contacts::Type::GroupMembership' };
@@ -377,6 +380,15 @@ coerce ArrayRefOfWebsite,
     via { [ map { to_Website( $_ ) } @{ $_ } ] },
     from Any,
     via { [ to_Website( $_ ) ] };
+
+class_type Sensitivity,
+    { class => 'WWW::Google::Contacts::Type::Sensitivity' };
+
+coerce Sensitivity,
+    from HashRef,
+    via { WWW::Google::Contacts::Type::Sensitivity->new( $_ ) },
+    from Str,
+    via { WWW::Google::Contacts::Type::Sensitivity->new( type => $_ ) };
 
 class_type Photo,
     { class => 'WWW::Google::Contacts::Photo' };

@@ -23,6 +23,8 @@ foreach my $g ( @groups ) {
     is ( scalar @{ $g->member } > 0, 1, "Test group got members");
     my $member = $g->member->[0];
 
+    my ($update, $update2, $addr, $web, $gender);
+
     $member->postal_address({
         street   => "Somestreet " . int(rand(100)),
         city     => "London",
@@ -33,26 +35,46 @@ foreach my $g ( @groups ) {
         },
     });
 
+    $member->website({
+        type => 'blog',
+        value => 'http://blah.blog.org/',
+    });
+
+    $member->gender( "male" );
+
     $member->update;
 
     # Now fetch this user again and ensure data is valid
-    my $update = $google->contact( $member->id );
-    my $addr = $update->postal_address->[0];
+    $update = $google->contact( $member->id );
+    $addr = $update->postal_address->[0];
     ok ( defined $addr, "Updated user got postal address");
     is ( $addr->city, "London", "...correct city");
     is ( $addr->type->name, "home", "...got the default type");
     is ( $addr->country->name, "Norway", "...got correct country");
     is ( $addr->country->code, "NO", "...and correct country code");
 
-    $member = $update;
-    $member->postal_address({
+    $web = $update->website->[0];
+    ok ( defined $web, "Updated user got website");
+    is ( $web->type, "blog", "...correct type");
+    is ( $web->value, 'http://blah.blog.org/', "...correct value");
+
+    is ( $update->gender->value, "male", "...correct gender value = male");
+
+    $update->postal_address({
         street   => "Somestreet " . int(rand(100)),
         city     => "Londonx",
         type     => '',
         country  => "Sweden",
     });
 
-    $member->update;
+    $update->add_website({
+        type => "work",
+        value => "http://work.com",
+    });
+
+    $update->sensitivity( "private" );
+    $update->gender("female");
+    $update->update;
 
     # Now fetch this user again and ensure data is valid
     $update = $google->contact( $member->id );
@@ -62,6 +84,26 @@ foreach my $g ( @groups ) {
     is ( $addr->type->name, "home", "...got the default type");
     is ( $addr->country->name, "Sweden", "...got correct country");
     is ( $addr->country->code, undef, "...and no country code, correct");
+
+    is ( $update->sensitivity->type, "private", "...correct sensitivity = private");
+
+    $web = $update->website;
+    is ( scalar @{ $web }, 2, "Got 2 websites now");
+    is ( $update->gender->value, "female", "...correct gender value = female");
+
+    $update->website("http://something.com");
+    $update->sensitivity( "normal" );
+
+    # 2nd update
+    $update->update;
+    $update2 = $google->contact( $member->id );
+
+    $web = $update2->website;
+    is ( scalar @{ $web }, 1, "Got 1 website now");
+    $web = $update2->website->[0];
+    is ( $web->type, 'home', "...with correct (default) type");
+    is ( $web->value, 'http://something.com', "...and correct value");
+    is ( $update->sensitivity->type, "normal", "...correct sensitivity = normal");
 }
 
 done_testing;
