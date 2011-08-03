@@ -2,7 +2,7 @@ package WWW::Google::Contacts::Type::Organization;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
-use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool );
+use WWW::Google::Contacts::InternalTypes qw( Rel XmlBool Where );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
@@ -69,12 +69,13 @@ has primary => (
 );
 
 has where => (
-    isa        => Str,
+    isa        => Where,
     is         => 'rw',
     traits     => [ 'XmlField' ],
     xml_key    => 'gd:where',
     predicate  => 'has_where',
     is_element => 1,
+    coerce     => 1,
 );
 
 no Moose;
