@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.33    2011.10.27
+	Create useful error message on coercion failure
+	Bugfix for language. Thanks to Kirby James for reporting
+
 0.32	2011.08.03
 	Bugfix for organization/where
 
