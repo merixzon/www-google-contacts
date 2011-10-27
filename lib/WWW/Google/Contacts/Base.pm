@@ -63,7 +63,6 @@ sub to_xml_hashref {
 sub set_from_server {
     my ($self, $data) = @_;
 
-    #use Data::Dumper; print Dumper { data => $data };
     foreach my $attr ( $self->xml_attributes ) {
         if ( defined $data->{ $attr->xml_key } ) {
             if ( my $writer = $attr->writer ) {

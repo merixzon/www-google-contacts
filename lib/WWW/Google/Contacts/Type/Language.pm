@@ -12,7 +12,14 @@ has code => (
     traits    => [ 'XmlField' ],
     xml_key   => 'code',
     predicate => 'has_code',
-    required  => 1,
+);
+
+has label => (
+    isa       => Str,
+    is        => 'rw',
+    traits    => [ 'XmlField' ],
+    xml_key   => 'label',
+    predicate => 'has_label',
 );
 
 no Moose;
