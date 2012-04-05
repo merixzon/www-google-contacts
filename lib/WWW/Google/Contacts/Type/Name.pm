@@ -2,35 +2,39 @@ package WWW::Google::Contacts::Type::Name;
 
 use Moose;
 use MooseX::Types::Moose qw( Str );
+use WWW::Google::Contacts::InternalTypes qw( YomiStr );
 use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
 
 has given_name => (
-    isa        => Str,
+    isa        => YomiStr,
     is         => 'rw',
     traits     => [ 'XmlField' ],
     xml_key    => 'gd:givenName',
     predicate  => 'has_given_name',
     is_element => 1,
+    coerce     => 1,
 );
 
 has additional_name => (
-    isa        => Str,
+    isa        => YomiStr,
     is         => 'rw',
     traits     => [ 'XmlField' ],
     xml_key    => 'gd:additionalName',
     predicate  => 'has_additional_name',
     is_element => 1,
+    coerce     => 1,
 );
 
 has family_name => (
-    isa        => Str,
+    isa        => YomiStr,
     is         => 'rw',
     traits     => [ 'XmlField' ],
     xml_key    => 'gd:familyName',
     predicate  => 'has_family_name',
     is_element => 1,
+    coerce     => 1,
 );
 
 has name_prefix => (

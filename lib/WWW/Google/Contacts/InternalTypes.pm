@@ -8,6 +8,7 @@ use MooseX::Types -declare =>
             Where
             Method
             Country
+            YomiStr
     ) ];
 
 use MooseX::Types::Moose qw(Str Bool HashRef CodeRef Any);
@@ -90,4 +91,13 @@ coerce Country,
     via {
         require WWW::Google::Contacts::Type::Country;
         WWW::Google::Contacts::Type::Country->new( $_ );
+    };
+
+subtype YomiStr,
+    as Str;
+
+coerce YomiStr,
+    from HashRef,
+    via {
+        $_->{ content };
     };
