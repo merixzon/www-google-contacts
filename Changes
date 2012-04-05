@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.34    2012.04.05
+        Handle names with Yomi values. Thanks to Andreas Mielke for reporting
+
 0.33    2011.10.27
 	Create useful error message on coercion failure
 	Bugfix for language. Thanks to Kirby James for reporting
