@@ -28,6 +28,8 @@ foreach my $g ( @groups ) {
     });
     $member->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
     # Now fetch this user again and ensure data is valid
     $member = $google->contact( $member->id );
     my $lang = $member->language->[0];
@@ -39,6 +41,8 @@ foreach my $g ( @groups ) {
     });
     $member->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
     $member = $google->contact( $member->id );
     $lang = $member->language->[0];
     ok ( defined $lang, "Updated user got language");
@@ -47,6 +51,8 @@ foreach my $g ( @groups ) {
     $member->language( undef );
     $member->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
     # Now fetch this user again and ensure data is valid
     $member = $google->contact( $member->id );
     $lang = $member->organization;

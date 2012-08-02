@@ -25,14 +25,17 @@ foreach my $g ( @groups ) {
         is ( defined $member->full_name, 1, "Member got full name [" . $member->full_name . "]" );
 
         my $email = $member->email->[0];
-        ok ( defined $email, "...got an email address");
+        ok ( defined $email, "...got an email address [" . $email->value . "]");
         my $type = $email->type->name;
-        my $newtype = 'home';
-        if ( $type eq 'home' ) {
-            $newtype = 'work';
+        my $newtype = 'work';
+        if ( $type eq 'work' ) {
+            $newtype = 'home';
         }
         $email->type( $newtype );
         $member->update;
+
+        # If we fetch again instantly, we don't get the updated record :-/
+        sleep 5;
 
         # Now fetch this user again and ensure type has been updated
         my $update = $google->contact( $member->id );
@@ -45,6 +48,9 @@ foreach my $g ( @groups ) {
 
         $upd_email->type( 'spamhaus' );
         $update->update;
+
+        # If we fetch again instantly, we don't get the updated record :-/
+        sleep 5;
 
         # Fetch this user again and ensure type has been updated
         $update = $google->contact( $member->id );

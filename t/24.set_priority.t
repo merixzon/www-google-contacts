@@ -26,6 +26,8 @@ foreach my $g ( @groups ) {
     $member->priority("high");
     $member->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
     # Now fetch this user again and ensure data is valid
     my $update = $google->contact( $member->id );
     my $prio = $update->priority->value;
@@ -37,6 +39,8 @@ foreach my $g ( @groups ) {
     $member->priority( undef );
     $member->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
     # Now fetch this user again and ensure data is valid
     $update = $google->contact( $member->id );
     $prio = $update->priority->value;

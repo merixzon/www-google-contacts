@@ -44,6 +44,9 @@ foreach my $g ( @groups ) {
 
     $member->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
+
     # Now fetch this user again and ensure data is valid
     $update = $google->contact( $member->id );
     $addr = $update->postal_address->[0];
@@ -76,6 +79,9 @@ foreach my $g ( @groups ) {
     $update->gender("female");
     $update->update;
 
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
+
     # Now fetch this user again and ensure data is valid
     $update = $google->contact( $member->id );
     $addr = $update->postal_address->[0];
@@ -96,6 +102,9 @@ foreach my $g ( @groups ) {
 
     # 2nd update
     $update->update;
+
+    # If we fetch again instantly, we don't get the updated record :-/
+    sleep 5;
     $update2 = $google->contact( $member->id );
 
     $web = $update2->website;
