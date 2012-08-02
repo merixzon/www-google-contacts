@@ -21,4 +21,14 @@ my $res = to_Name( $name );
 is $res->family_name, 'bar';
 is $res->given_name, 'Foo';
 
+$name = {
+    full_name => {
+        content => "Arne Weise",
+        yomi => "foo",
+    },
+};
+$res = to_Name( $name );
+is $res->given_name, 'Arne';
+is $res->family_name, 'Weise';
+
 done_testing;
