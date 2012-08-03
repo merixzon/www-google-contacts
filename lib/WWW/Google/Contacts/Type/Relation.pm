@@ -7,14 +7,13 @@ use WWW::Google::Contacts::Meta::Attribute::Trait::XmlField;
 
 extends 'WWW::Google::Contacts::Type::Base';
 
-has type => (
-    isa       => Str, # not a full url rel :-/
-    is        => 'rw',
-    traits    => [ 'XmlField' ],
-    xml_key   => 'rel',
-    predicate => 'has_type',
-    required  => 1,
-);
+with 'WWW::Google::Contacts::Roles::HasTypeAndLabel' => {
+    valid_types => [ qw(
+                           assistant brother child domestic-partner father friend manager
+                           mother parent partner referred-by relative sister spouse
+                   ) ],
+    default_type => '',
+};
 
 has value => (
     isa       => Str,
@@ -24,6 +23,14 @@ has value => (
     predicate => 'has_value',
     required  => 1,
 );
+
+# 'rel' XML key must not have contain a full url, only the value
+before to_xml_hashref => sub {
+    my $self = shift;
+    my $type = $self->type->uri;
+    $type =~ s{^.*\#}{};
+    $self->type->uri( $type );
+};
 
 no Moose;
 __PACKAGE__->meta->make_immutable;

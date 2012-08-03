@@ -16,7 +16,7 @@ has name => (
 
 has uri => (
     isa        => Str,
-    is         => 'ro',
+    is         => 'rw',
     traits    => [ 'XmlField' ],
     xml_key   => 'rel',
     predicate => 'has_uri',
