@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.35    2012.08.03
+        Handle Yomi values for full names. Thanks to Masanori Hara for reporting
+        Ensure we handle all relationship types. Thanks to Rhesa Rozendaal for reporting
+        
 0.34    2012.04.05
         Handle names with Yomi values. Thanks to Andreas Mielke for reporting
 

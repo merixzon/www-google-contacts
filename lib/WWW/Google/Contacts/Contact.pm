@@ -396,6 +396,11 @@ sub add_website {
     $self->website([]) unless $self->has_website;
     push @{ $self->website }, to_Website( $website );
 }
+sub add_relation {
+    my ($self,$relation) = @_;
+    $self->relation([]) unless $self->has_relation;
+    push @{ $self->relation }, to_Relation( $relation );
+}
 sub add_group_membership {
     my ($self,$group) = @_;
     $self->group_membership([]) unless $self->has_group_membership;
