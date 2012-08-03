@@ -55,7 +55,7 @@ foreach my $g ( @groups ) {
     sleep 5;
     # Now fetch this user again and ensure data is valid
     $member = $google->contact( $member->id );
-    $lang = $member->organization;
+    $lang = $member->language;
     ok ( ! defined $lang, "Updated user got no language");
 }
 
