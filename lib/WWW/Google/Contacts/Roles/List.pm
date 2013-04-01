@@ -63,10 +63,21 @@ sub search {
                 my $search_field = $obj->$key->[0]->search_field;
                 next ELEM unless ( defined $search_field );
                 my @values = map { $_->$search_field } @{ $obj->$key };
-                next ELEM unless ( any(@values) eq $search->{ $key } );
+                my $search_key = $search->{$key};
+                # protocol might not match, that doesn't matter
+                if ( $search_key =~ s{^http.?:}{} ) {
+                    $_ =~ s{^http.?:}{} foreach (@values);
+                }
+                next ELEM unless ( any(@values) eq $search_key );
             }
             else {
-                next ELEM unless ( $obj->$key eq $search->{ $key } );
+                my $search_key = $search->{$key};
+                my $obj_key = $obj->$key;
+                # protocol might not match, that doesn't matter
+                if ( $search_key =~ s{^http.?:}{} ) {
+                    $obj_key =~ s{^http.?:}{};
+                }
+                next ELEM unless ( $obj_key eq $search_key );
             }
         }
         push @{ $to_ret }, $obj;

@@ -17,7 +17,7 @@ my $password = $ENV{TEST_GOOGLE_PASSWORD};
 plan skip_all => 'no TEST_GOOGLE_USERNAME or TEST_GOOGLE_PASSWORD set in the environment'
     unless $username and $password;
 
-my $google = WWW::Google::Contacts->new(username => $username, password => $password);
+my $google = WWW::Google::Contacts->new(username => $username, password => $password, protocol => "https");
 isa_ok($google, 'WWW::Google::Contacts');
 my @contacts = ();
 
@@ -31,7 +31,7 @@ foreach my $c ( @contacts ) {
 
 @contacts = $google->contacts->search({ full_name => "Test user with 3 user def fields" });
 foreach my $c ( @contacts ) {
-    is ( scalar @{ $c->user_defined }, 3, "Got one user defined value" );
+    is ( scalar @{ $c->user_defined }, 3, "Got one three defined values" );
     foreach my $def_num (0,1,2) {
         my $user_def = $c->user_defined->[$def_num];
         is ( defined $user_def->key, 1, "User defined field [$def_num] got key defined");

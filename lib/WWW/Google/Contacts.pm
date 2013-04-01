@@ -24,6 +24,12 @@ has password => (
     default    => sub { $ENV{ GOOGLE_PASSWORD } },
 );
 
+has protocol => (
+    isa        => 'Str',
+    is         => 'ro',
+    default    => 'http',
+);
+
 has server => (
     isa        => 'Object',
     is         => 'ro',
@@ -39,6 +45,7 @@ sub _build_server {
     return WWW::Google::Contacts::Server->new({
         username => $self->username,
         password => $self->password,
+        protocol => $self->protocol
     });
 }
 

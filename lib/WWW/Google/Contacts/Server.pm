@@ -27,6 +27,12 @@ has password => (
     required   => 1,
 );
 
+has protocol => (
+    isa        => 'Str',
+    is         => 'ro',
+    default    => 'http',
+);
+
 has gdata_version => (
     isa       => 'Str',
     is        => 'ro',
@@ -52,8 +58,22 @@ sub authenticate {
     return 1 if ( $self->authsub );
 }
 
+foreach my $method (qw(get post put delete)) {
+    around $method => sub {
+        my $orig = shift;
+        my $self = shift;
+        my $id = shift;
+        # ENSURE we use right protocol.. Even though we've specified https,
+        # references in the data from google points to http://
+        my $proto = $self->protocol;
+        $id =~ s{^\w+://}{$proto://};
+        return $self->$orig($id, @_);
+    };
+}
+
 sub get {
     my ($self, $id) = @_;
+
     my %headers = $self->authsub->auth_params;
     $headers{'GData-Version'} = $self->gdata_version;
     my $res = $self->ua->get( $id, %headers );
