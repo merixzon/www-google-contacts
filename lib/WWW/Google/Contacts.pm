@@ -263,7 +263,11 @@ __END__
 
     use WWW::Google::Contacts;
 
-    my $google = WWW::Google::Contacts->new( username => "your.username", password => "your.password" );
+    my $google = WWW::Google::Contacts->new(
+        username => "your.username",
+        password => "your.password",
+        protocol => "https",
+    );
 
     # Create a new contact
     my $contact = $google->new_contact;
@@ -311,10 +315,12 @@ B<NOTE> This new interface is still quite untested. Please report any bugs.
 
 =head1 CONSTRUCTOR
 
-=head2 new( username => .., password => .. )
+=head2 new( username => .., password => .. , protocol => ..)
 
 I<username> and I<password> are required arguments and must be valid Google credentials. If you do not have a Google account
 you can create one at L<https://www.google.com/accounts/NewAccount>.
+
+I<protocol> defaults to B<http>, but can optionally be set to B<https>.
 
 =head1 METHODS
 

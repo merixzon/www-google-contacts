@@ -11,7 +11,11 @@ Usage
 
     use WWW::Google::Contacts;
 
-    my $google = WWW::Google::Contacts->new( username => "your.username", password => "your.password" );
+    my $google = WWW::Google::Contacts->new(
+        username => "your.username",
+        password => "your.password",
+        protocol => "https",
+    );
 
     # Create a new contact
     my $contact = $google->new_contact;
