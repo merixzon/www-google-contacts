@@ -47,9 +47,9 @@ B<WARNING> This is quite slow at the moment, at least if you've got a lot of con
 
 Given search criteria, will return all your contacts that matches critera.
 
- my @bastards = $contacts->search({
-    given_name => "George",
-    family_name => "Bush",
+ my @heroes = $contacts->search({
+    given_name => "Rutger",
+    family_name => "Hauer",
  });
 
 B<TODO>: Speed up. Make search arguments more flexible ( AND / OR / Regex / ... ). Also, doubt that search on random things like IM addresses work right now..
