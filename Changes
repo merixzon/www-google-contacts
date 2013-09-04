@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.37    2013.09.04
+        Fix utf8 handling [RT#88339]. Thanks to Daniel for reporting
+
 0.36    2013.04.01
         Allow using protocol https. Thanks to Jarrod Makin for suggesting
 
