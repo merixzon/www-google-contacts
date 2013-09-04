@@ -54,3 +54,10 @@ Usage
     $contact->add_group_membership( $movie_stars_group );
     $contact->update;
 
+
+Description
+-----------
+
+This module implements the [the Google Contacts API version 3.0](http://code.google.com/apis/contacts/docs/3.0/developers_guide_protocol.html),
+allowing you to easily create, retrieve, update and delete contacts and contact groups you have in your Google account using Perl.
+
