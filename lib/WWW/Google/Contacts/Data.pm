@@ -10,7 +10,7 @@ sub decode_xml {
     my ($class, $content) = @_;
 
     my $xmls = XML::Simple->new;
-    my $data = $xmls->XMLin( encode_utf8($content), SuppressEmpty => undef, KeyAttr => []);
+    my $data = $xmls->XMLin( decode_utf8($content), SuppressEmpty => undef, KeyAttr => []);
     return $data;
 }
 
@@ -19,7 +19,7 @@ sub encode_xml {
 
     my $xmls = XML::Simple->new;
     my $xml = $xmls->XMLout( $content, KeepRoot => 1 );
-    return $xml;
+    return encode_utf8($xml);
 }
 
 1;

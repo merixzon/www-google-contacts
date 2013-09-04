@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use utf8;
 
 ## NOTE -- This test relies on you having a couple of very specific users in your google account
 # One group called "Test group", with at least one member
@@ -28,9 +29,12 @@ foreach my $g ( @groups ) {
     is ( scalar @{ $g->member } > 0, 1, "Test group got members");
     foreach my $member ( @{ $g->member } ) {
         is ( defined $member->full_name, 1, "Member got full name [" . $member->full_name . "]" );
-        $member->email( $member->full_name . '@piña.coláda');
+        my $new_val = 'xfoobar@piña.coláda☃snowman.com';
+        $member->email( $new_val );
+
         $member->update;
         is ( 1,1,"Updated contact" );
+        last;
     }
 }
 
@@ -39,7 +43,10 @@ foreach my $g ( @groups ) {
     is ( scalar @{ $g->member } > 0, 1, "Test group still got members");
     foreach my $member ( @{ $g->member } ) {
         my $email = $member->email->[0];
-        is ( $email->value, $member->full_name . '@piña.coláda', "Email address looks right" );
+        my $new_val = 'xfoobar@piña.coláda☃snowman.com';
+        is ( $email->value, $new_val, "Email address looks right" );
+        ok ( utf8::is_utf8($email->value), "..and it's utf8");
+        last;
     }
 }
 
