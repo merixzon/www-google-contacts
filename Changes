@@ -1,5 +1,8 @@
 Revision history for WWW-Google-Contacts
 
+0.38	2013.11.25
+	Bit of documentation for how to deal with photos
+
 0.37    2013.09.04
         Fix utf8 handling [RT#88339]. Thanks to Daniel for reporting
 
