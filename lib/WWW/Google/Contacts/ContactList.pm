@@ -29,7 +29,7 @@ __END__
     while ( my $cont = $contacts->next ) {
        print "You got a friend called " . $cont->full_name . "\n";
 
-       if ( $cont->photo->exist ) {
+       if ( $cont->photo->exists ) {
           print "And you got a photo of this friend\n";
           $contact->photo->to_file( "/tmp/photo.jpg" );
        }

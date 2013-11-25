@@ -29,6 +29,7 @@ foreach my $g ( @groups ) {
     is ( scalar @{ $g->member } > 0, 1, "Test group got members");
     foreach my $member ( @{ $g->member } ) {
         is ( defined $member->full_name, 1, "Member got full name [" . $member->full_name . "]" );
+        ok utf8::is_utf8( $member->full_name ), "full_name is utf8";
         my $new_val = 'xfoobar@piña.coláda☃snowman.com';
         $member->email( $new_val );
 
