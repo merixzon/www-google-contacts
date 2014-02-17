@@ -259,6 +259,10 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
+=head1 NAME
+
+WWW::Google::Contacts - Google Contacts Data API
+
 =head1 SYNOPSIS
 
     use WWW::Google::Contacts;
