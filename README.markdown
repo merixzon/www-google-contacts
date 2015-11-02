@@ -6,6 +6,15 @@ Synopsis
 
 A Perl interface to Google Contacts.
 
+CURRENTLY NOT WORKING
+---------------------
+
+This module is currently not working. Some time back, Google obsoleted the authentication method
+used by this module.
+
+Patches for updating how authentication is handled are more than welcome!
+
+
 Usage
 -----
 

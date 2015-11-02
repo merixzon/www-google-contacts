@@ -263,6 +263,13 @@ __END__
 
 WWW::Google::Contacts - Google Contacts Data API
 
+=head1 CURRENTLY NOT WORKING
+
+This module is currently not working. Some time back, Google obsoleted the authentication method
+used by this module.
+
+Patches for updating how authentication is handled are more than welcome!
+
 =head1 SYNOPSIS
 
     use WWW::Google::Contacts;

@@ -1,5 +1,9 @@
 Revision history for WWW-Google-Contacts
 
+0.39    2015.11.02
+        Put warning message in documentation stating the module is currently not working.
+        It needs to be updated to use new authentication system used by Google.
+
 0.38	2013.11.25
 	Bit of documentation for how to deal with photos
 
